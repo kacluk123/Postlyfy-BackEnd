@@ -45,7 +45,6 @@ export const getPosts: RequestHandler = async (req: Request, res: Response) => {
             posts: postsList,
             total: postsTotalNumber,
         }
-
         res.status(200).json(response)
     } catch (err) {
         console.log(err)

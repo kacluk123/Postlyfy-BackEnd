@@ -1,7 +1,7 @@
 // import CreateUser from '../models/createUser'
 import { validationResult } from 'express-validator'
 import CreateUser from '../models/createUser'
-import { Request, Response, RequestHandler } from 'express';
+import { Request, Response, RequestHandler, NextFunction } from 'express';
 import { getDb } from '../util/database'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -24,7 +24,7 @@ export const signup: RequestHandler = async (req: Request, res: Response) => {
     }
 }
 
-export const login: RequestHandler = async (req: Request, res: Response) => {
+export const login: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
@@ -54,5 +54,5 @@ export const login: RequestHandler = async (req: Request, res: Response) => {
         { expiresIn: '24h' }
       );
 
-    res.status(200).json({ token: token, userId: searchedUser._id.toString() });
+      res.cookie('token', token, { httpOnly: false }).sendStatus(200)
 }

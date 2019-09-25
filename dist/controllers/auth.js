@@ -34,7 +34,7 @@ exports.signup = (req, res) => __awaiter(this, void 0, void 0, function* () {
         }
     }
 });
-exports.login = (req, res) => __awaiter(this, void 0, void 0, function* () {
+exports.login = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
     if (!errors.isEmpty()) {
         res.status(422).json({ messages: errors.array(), isError: true });
@@ -53,6 +53,6 @@ exports.login = (req, res) => __awaiter(this, void 0, void 0, function* () {
         userId: searchedUser._id.toString(),
         userName: searchedUser.name
     }, jwt_secret_key_1.default, { expiresIn: '24h' });
-    res.status(200).json({ token: token, userId: searchedUser._id.toString() });
+    res.cookie('token', token, { httpOnly: false }).sendStatus(200);
 });
 //# sourceMappingURL=auth.js.map
