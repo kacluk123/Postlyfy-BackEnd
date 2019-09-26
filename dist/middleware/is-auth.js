@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const jwt_secret_key_1 = __importDefault(require("../util/jwt_secret_key"));
 const isAuth = (req, res, next) => {
-    const authHeader = req.get('Authorization');
-    if (!authHeader) {
+    const token = req.cookies.token;
+    console.log(token);
+    if (!token) {
         const error = new Error('Not authenticated.');
         res.status(422).json({ messages: [{ msg: "Not authenticated" }], isError: true });
         throw error;
     }
-    const token = authHeader.split(' ')[1];
     let decodedToken;
     try {
         decodedToken = jsonwebtoken_1.default.verify(token, jwt_secret_key_1.default);

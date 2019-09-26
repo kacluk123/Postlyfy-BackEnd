@@ -53,6 +53,6 @@ exports.login = (req, res, next) => __awaiter(this, void 0, void 0, function* ()
         userId: searchedUser._id.toString(),
         userName: searchedUser.name
     }, jwt_secret_key_1.default, { expiresIn: '24h' });
-    res.cookie('token', token, { httpOnly: false }).sendStatus(200);
+    res.cookie('token', token, { httpOnly: false, secure: false }).sendStatus(200);
 });
 //# sourceMappingURL=auth.js.map

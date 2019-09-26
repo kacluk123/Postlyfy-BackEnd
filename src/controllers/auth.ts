@@ -54,5 +54,5 @@ export const login: RequestHandler = async (req: Request, res: Response, next: N
         { expiresIn: '24h' }
       );
 
-      res.cookie('token', token, { httpOnly: false }).sendStatus(200)
+      res.cookie('token', token, { httpOnly: false, secure: false }).sendStatus(200)
 }
