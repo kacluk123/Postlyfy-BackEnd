@@ -24,11 +24,11 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         const post = new Post_1.default(requestData);
         try {
             yield post.savePostToDb();
-            socket_1.getIo().emit('post', {
-                action: 'create',
+            socket_1.getIo().emit("post", {
+                action: "create",
                 post: post.postToSaveToDb()
             });
-            res.status(200).json({ message: 'Post has been added!' });
+            res.status(200).json({ message: "Post has been added!" });
         }
         catch (err) {
             console.log(err);
@@ -43,12 +43,13 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
     try {
         const postsList = yield getPosts({
             limit,
-            offset,
+            offset
         });
         const postsTotalNumber = yield getTotalPostNumber();
         const response = {
+            isError: false,
             posts: postsList,
-            total: postsTotalNumber,
+            total: postsTotalNumber
         };
         res.status(200).json(response);
     }

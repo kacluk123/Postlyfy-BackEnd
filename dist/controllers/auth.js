@@ -27,7 +27,10 @@ exports.signup = (req, res) => __awaiter(this, void 0, void 0, function* () {
         const user = new createUser_1.default(req.body);
         try {
             yield user.addUserToDb();
-            res.status(201).json({ messages: [{ msg: 'User has been created!' }], isError: false });
+            res.status(201).json({
+                messages: [{ msg: "User has been created!" }],
+                isError: false
+            });
         }
         catch (err) {
             console.log(err);
@@ -40,19 +43,27 @@ exports.login = (req, res, next) => __awaiter(this, void 0, void 0, function* ()
         res.status(422).json({ messages: errors.array(), isError: true });
     }
     const db = database_1.getDb();
-    const searchedUser = yield db.collection('Users').findOne({ name: req.body.name });
+    const searchedUser = yield db
+        .collection("Users")
+        .findOne({ name: req.body.name });
     if (!searchedUser) {
-        return res.status(422).json({ messages: [{ msg: "User not exist" }], isError: true });
+        return res
+            .status(422)
+            .json({ messages: [{ msg: "User not exist" }], isError: true });
     }
     const isPasswordEqual = yield bcrypt_1.default.compare(req.body.password, searchedUser.password);
     if (!isPasswordEqual) {
-        return res.status(422).json({ messages: [{ msg: "Password is not correct" }], isError: true });
+        return res
+            .status(422)
+            .json({ messages: [{ msg: "Password is not correct" }], isError: true });
     }
     const token = jsonwebtoken_1.default.sign({
         email: searchedUser.email,
         userId: searchedUser._id.toString(),
         userName: searchedUser.name
-    }, jwt_secret_key_1.default, { expiresIn: '24h' });
-    res.cookie('token', token, { httpOnly: false, secure: false }).sendStatus(200);
+    }, jwt_secret_key_1.default, { expiresIn: "24h" });
+    res
+        .cookie("token", token, { httpOnly: false, secure: false })
+        .sendStatus(200);
 });
 //# sourceMappingURL=auth.js.map
