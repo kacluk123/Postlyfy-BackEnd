@@ -11,7 +11,7 @@ export const createPost: RequestHandler = async (
   res: Response
 ) => {
   const errors = validationResult(req);
-
+  console.log(req);
   if (!errors.isEmpty()) {
     res.status(422).json(errors.array());
   } else {
@@ -36,10 +36,13 @@ export const getPosts: RequestHandler = async (req: Request, res: Response) => {
   const getTotalPostNumber = Post.countPosts;
   const offset = req.body.offset;
   const limit = req.body.limit;
+  const tag = req.body.tag;
+
   try {
     const postsList = await getPosts({
       limit,
-      offset
+      offset,
+      tag
     });
 
     const postsTotalNumber = await getTotalPostNumber();

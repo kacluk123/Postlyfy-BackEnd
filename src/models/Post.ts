@@ -1,51 +1,63 @@
-import { getDb } from '../util/database'
-import mongodb from 'mongodb'
+import { getDb } from "../util/database";
+import mongodb from "mongodb";
 
 type postList = Array<{
-    _id: string;
-    createdBy: string;
-    postContent: string;
-    addedAt: string
-}>
+  _id: string;
+  createdBy: string;
+  postContent: string;
+  addedAt: string;
+  tags: string;
+}>;
 
 export default class createPost {
-    post: string
-    userName: string
+  protected post: string;
+  protected userName: string;
+  protected tags: string;
 
-    constructor({ post, userName }) {
-        this.post = post 
-        this.userName = userName
-    }
+  constructor({ post, userName, tags }) {
+    this.post = post;
+    this.userName = userName;
+    this.tags = tags;
+  }
 
-    public savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
-        const db = getDb()
+  public savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
+    const db = getDb();
 
-        return db.collection('posts')
-            .insertOne(this.postToSaveToDb())
-    }
+    return db.collection("posts").insertOne(this.postToSaveToDb());
+  }
 
-    public postToSaveToDb() {
-        return {
-            createdBy: this.userName,
-            postContent: this.post,
-            addedAt: new Date()
-        }
-    }
+  public postToSaveToDb() {
+    return {
+      createdBy: this.userName,
+      postContent: this.post,
+      tags: this.tags,
+      addedAt: new Date()
+    };
+  }
 
-    public static getPosts({ limit, offset }: { limit: number, offset: number }): Promise<postList> {
-        const db = getDb()
-        
-        return db.collection('posts')
-        .find()
-        .limit(limit)
-        .skip(offset)
-        .sort({ addedAt: -1 })
-        .toArray()
-    }
+  public static getPosts({
+    limit,
+    offset,
+    tag
+  }: {
+    limit: number;
+    offset: number;
+    tag: string;
+  }): Promise<postList> {
+    const db = getDb();
 
-    public static countPosts(): Promise<number> {
-        const db = getDb()
+    return db
+      .collection("posts")
+      .find({ tags: tag })
+      .limit(limit)
+      .skip(offset)
+      .sort({ addedAt: -1 })
+      .toArray();
+  }
 
-        return db.collection('posts').count()
-    }
+  public static countPosts(): Promise<number> {
+    const db = getDb();
+
+    return db.collection("posts").count();
+  }
 }
