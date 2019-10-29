@@ -7,7 +7,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const jwt_secret_key_1 = __importDefault(require("../util/jwt_secret_key"));
 const isAuth = (req, res, next) => {
     const token = req.cookies.token;
-    console.log(token);
     if (!token) {
         const error = new Error('Not authenticated.');
         res.status(422).json({ messages: [{ msg: "Not authenticated" }], isError: true });

@@ -12,12 +12,16 @@ type postList = Array<{
 export default class createPost {
   protected post: string;
   protected userName: string;
-  protected tags: string;
+  protected tags: string[];
 
   constructor({ post, userName, tags }) {
     this.post = post;
     this.userName = userName;
     this.tags = tags;
+  }
+
+  private removeHashTags(arratToRemoveFirstLetter: string[]): string[] {
+    return arratToRemoveFirstLetter.map((word: string) => word.substr(1));
   }
 
   public savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
@@ -30,7 +34,7 @@ export default class createPost {
     return {
       createdBy: this.userName,
       postContent: this.post,
-      tags: this.tags,
+      tags: this.removeHashTags(this.tags),
       addedAt: new Date()
     };
   }

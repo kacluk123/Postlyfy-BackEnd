@@ -9,7 +9,7 @@ interface isAuthRequest extends Request {
 
 const isAuth: RequestHandler = (req: isAuthRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.token
-  console.log(token)
+
   if (!token) {
     const error = new Error('Not authenticated.');
     res.status(422).json({ messages: [{msg: "Not authenticated"}], isError: true })

@@ -9,9 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
+const checkThatEveryArrayItemContainsHashAtStart = (wordsArray) => wordsArray.some((word) => !word.startsWith("#"));
 const checkForTags = (value, { req }) => __awaiter(this, void 0, void 0, function* () {
     if (!Array.isArray(value)) {
         return Promise.reject("Must be an array!");
+    }
+});
+const checkForHashtags = (value, { req }) => __awaiter(this, void 0, void 0, function* () {
+    if (checkThatEveryArrayItemContainsHashAtStart(value)) {
+        return Promise.reject("Not all string are hashtags!");
     }
 });
 exports.createPost = [
@@ -26,5 +32,6 @@ exports.createPost = [
         .isLength({ min: 1 })
         .withMessage("Must contains at least one tag")
         .custom(checkForTags)
+        .custom(checkForHashtags)
 ];
 //# sourceMappingURL=posts.js.map

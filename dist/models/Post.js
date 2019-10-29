@@ -7,6 +7,9 @@ class createPost {
         this.userName = userName;
         this.tags = tags;
     }
+    removeHashTags(arratToRemoveFirstLetter) {
+        return arratToRemoveFirstLetter.map((word) => word.substr(1));
+    }
     savePostToDb() {
         const db = database_1.getDb();
         return db.collection("posts").insertOne(this.postToSaveToDb());
@@ -15,7 +18,7 @@ class createPost {
         return {
             createdBy: this.userName,
             postContent: this.post,
-            tags: this.tags,
+            tags: this.removeHashTags(this.tags),
             addedAt: new Date()
         };
     }
