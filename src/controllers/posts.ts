@@ -1,6 +1,7 @@
 import { validationResult, body } from "express-validator";
-import Post from "../models/Post";
+import Posts from "../models/Post";
 import { Request, Response, RequestHandler } from "express";
+import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
 interface createPostRequest extends Request {
   userName: string;
@@ -16,7 +17,7 @@ export const createPost: RequestHandler = async (
     res.status(422).json(errors.array());
   } else {
     const requestData = { ...req.body, userName: req.userName };
-    const post: Post = new Post(requestData);
+    const post: Posts = new Posts(requestData);
 
     try {
       await post.savePostToDb();
@@ -32,8 +33,8 @@ export const createPost: RequestHandler = async (
 };
 
 export const getPosts: RequestHandler = async (req: Request, res: Response) => {
-  const getPosts = Post.getPosts;
-  const getTotalPostNumber = Post.countPosts;
+  const getPosts = Posts.getPosts;
+  const getTotalPostNumber = Posts.countPosts;
   const offset = req.body.offset;
   const limit = req.body.limit;
   const tag = req.body.tag;
@@ -45,7 +46,11 @@ export const getPosts: RequestHandler = async (req: Request, res: Response) => {
       tag
     });
 
-    const postsTotalNumber = await getTotalPostNumber();
+    const x = await Tags.getAllTags();
+
+    console.log(x);
+
+    const postsTotalNumber = await getTotalPostNumber(tag);
 
     const response = {
       isError: false,

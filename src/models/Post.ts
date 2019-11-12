@@ -9,36 +9,7 @@ type postList = Array<{
   tags: string;
 }>;
 
-export default class createPost {
-  protected post: string;
-  protected userName: string;
-  protected tags: string[];
-
-  constructor({ post, userName, tags }) {
-    this.post = post;
-    this.userName = userName;
-    this.tags = tags;
-  }
-
-  private removeHashTags(arratToRemoveFirstLetter: string[]): string[] {
-    return arratToRemoveFirstLetter.map((word: string) => word.substr(1));
-  }
-
-  public savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
-    const db = getDb();
-
-    return db.collection("posts").insertOne(this.postToSaveToDb());
-  }
-
-  public postToSaveToDb() {
-    return {
-      createdBy: this.userName,
-      postContent: this.post,
-      tags: this.removeHashTags(this.tags),
-      addedAt: new Date()
-    };
-  }
-
+export default class Posts {
   public static getPosts({
     limit,
     offset,
@@ -59,9 +30,41 @@ export default class createPost {
       .toArray();
   }
 
-  public static countPosts(): Promise<number> {
+  public static countPosts(tag: string): Promise<number> {
     const db = getDb();
 
-    return db.collection("posts").count();
+    return db
+      .collection("posts")
+      .find({ tags: tag })
+      .count();
+  }
+
+  protected post: string;
+  protected userName: string;
+  protected tags: string[];
+
+  constructor({ post, userName, tags }) {
+    this.post = post;
+    this.userName = userName;
+    this.tags = tags;
+  }
+
+  public savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
+    const db = getDb();
+
+    return db.collection("posts").insertOne(this.postToSaveToDb());
+  }
+
+  public postToSaveToDb() {
+    return {
+      createdBy: this.userName,
+      postContent: this.post,
+      tags: this.removeHashTags(this.tags),
+      addedAt: new Date()
+    };
+  }
+
+  private removeHashTags(arratToRemoveFirstLetter: string[]): string[] {
+    return arratToRemoveFirstLetter.map((word: string) => word.substr(1));
   }
 }

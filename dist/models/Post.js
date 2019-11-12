@@ -1,14 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../util/database");
-class createPost {
+class Posts {
+    static getPosts({ limit, offset, tag }) {
+        const db = database_1.getDb();
+        return db
+            .collection("posts")
+            .find({ tags: tag })
+            .limit(limit)
+            .skip(offset)
+            .sort({ addedAt: -1 })
+            .toArray();
+    }
+    static countPosts(tag) {
+        const db = database_1.getDb();
+        return db
+            .collection("posts")
+            .find({ tags: tag })
+            .count();
+    }
     constructor({ post, userName, tags }) {
         this.post = post;
         this.userName = userName;
         this.tags = tags;
-    }
-    removeHashTags(arratToRemoveFirstLetter) {
-        return arratToRemoveFirstLetter.map((word) => word.substr(1));
     }
     savePostToDb() {
         const db = database_1.getDb();
@@ -22,20 +36,9 @@ class createPost {
             addedAt: new Date()
         };
     }
-    static getPosts({ limit, offset, tag }) {
-        const db = database_1.getDb();
-        return db
-            .collection("posts")
-            .find({ tags: tag })
-            .limit(limit)
-            .skip(offset)
-            .sort({ addedAt: -1 })
-            .toArray();
-    }
-    static countPosts() {
-        const db = database_1.getDb();
-        return db.collection("posts").count();
+    removeHashTags(arratToRemoveFirstLetter) {
+        return arratToRemoveFirstLetter.map((word) => word.substr(1));
     }
 }
-exports.default = createPost;
+exports.default = Posts;
 //# sourceMappingURL=Post.js.map
