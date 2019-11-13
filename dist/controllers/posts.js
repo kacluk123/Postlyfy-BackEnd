@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const Post_1 = __importDefault(require("../models/Post"));
-const Tags_1 = __importDefault(require("../models/Tags"));
 const socket_1 = require("../util/socket");
 exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
@@ -49,8 +48,6 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
             offset,
             tag
         });
-        const x = yield Tags_1.default.getAllTags();
-        console.log(x);
         const postsTotalNumber = yield getTotalPostNumber(tag);
         const response = {
             isError: false,

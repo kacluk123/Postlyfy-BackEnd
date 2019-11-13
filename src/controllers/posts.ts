@@ -46,10 +46,6 @@ export const getPosts: RequestHandler = async (req: Request, res: Response) => {
       tag
     });
 
-    const x = await Tags.getAllTags();
-
-    console.log(x);
-
     const postsTotalNumber = await getTotalPostNumber(tag);
 
     const response = {

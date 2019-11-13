@@ -6,7 +6,17 @@ class Tags {
         const db = database_1.getDb();
         return db
             .collection("posts")
-            .find({}, { fields: { _id: 0, createdBy: 0, postContent: 0, addedAt: 0 } })
+            .aggregate([
+            { $unwind: "$tags" },
+            {
+                $group: {
+                    _id: { $toLower: "$tags" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { count: -1 } },
+            { $limit: 50 }
+        ])
             .toArray();
     }
 }
