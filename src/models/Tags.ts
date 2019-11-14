@@ -1,7 +1,12 @@
 import { getDb } from "../util/database";
 
+interface ITags {
+  _id: string;
+  count: number;
+}
+
 class Tags {
-  public static getAllTags() {
+  public static getAllTags(): Promise<ITags[]> {
     const db = getDb();
 
     return db
