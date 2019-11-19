@@ -1,23 +1,29 @@
-import jwt from 'jsonwebtoken'
-import jwtKey from '../util/jwt_secret_key'
-import { Request, Response, RequestHandler, NextFunction } from 'express';
+import jwt from "jsonwebtoken";
+import jwtKey from "../util/jwt_secret_key";
+import { Request, Response, RequestHandler, NextFunction } from "express";
 
 interface isAuthRequest extends Request {
-    userId: string
-    userName: string
+  userId: string;
+  userName: string;
 }
 
-const isAuth: RequestHandler = (req: isAuthRequest, res: Response, next: NextFunction) => {
-  const token = req.cookies.token
+const isAuth: RequestHandler = (
+  req: isAuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.cookies.token;
 
   if (!token) {
-    const error = new Error('Not authenticated.');
-    res.status(422).json({ messages: [{msg: "Not authenticated"}], isError: true })
+    const error = new Error("Not authenticated.");
+    res
+      .status(422)
+      .json({ messages: [{ msg: "Not authenticated" }], isError: true });
     throw error;
   }
-  
+
   let decodedToken;
-  
+
   try {
     decodedToken = jwt.verify(token, jwtKey);
   } catch (err) {
@@ -25,15 +31,17 @@ const isAuth: RequestHandler = (req: isAuthRequest, res: Response, next: NextFun
     throw err;
   }
   if (!decodedToken) {
-    const error = new Error('Not authenticated.');
-    res.status(422).json({ messages: [{msg: "Not authenticated"}], isError: true })
+    const error = new Error("Not authenticated.");
+    res
+      .status(422)
+      .json({ messages: [{ msg: "Not authenticated" }], isError: true });
     throw error;
   }
- 
+
   req.userId = decodedToken.userId;
   req.userName = decodedToken.userName;
 
   next();
 };
 
-export default isAuth
+export default isAuth;

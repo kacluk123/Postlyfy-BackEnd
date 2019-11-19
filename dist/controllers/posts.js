@@ -21,7 +21,7 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         res.status(422).json(errors.array());
     }
     else {
-        const requestData = Object.assign({}, req.body, { userName: req.userName });
+        const requestData = Object.assign({}, req.body, { userId: req.userId });
         const post = new Post_1.default(requestData);
         try {
             yield post.savePostToDb();

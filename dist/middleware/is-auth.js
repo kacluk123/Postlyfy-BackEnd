@@ -8,8 +8,10 @@ const jwt_secret_key_1 = __importDefault(require("../util/jwt_secret_key"));
 const isAuth = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
-        const error = new Error('Not authenticated.');
-        res.status(422).json({ messages: [{ msg: "Not authenticated" }], isError: true });
+        const error = new Error("Not authenticated.");
+        res
+            .status(422)
+            .json({ messages: [{ msg: "Not authenticated" }], isError: true });
         throw error;
     }
     let decodedToken;
@@ -21,8 +23,10 @@ const isAuth = (req, res, next) => {
         throw err;
     }
     if (!decodedToken) {
-        const error = new Error('Not authenticated.');
-        res.status(422).json({ messages: [{ msg: "Not authenticated" }], isError: true });
+        const error = new Error("Not authenticated.");
+        res
+            .status(422)
+            .json({ messages: [{ msg: "Not authenticated" }], isError: true });
         throw error;
     }
     req.userId = decodedToken.userId;

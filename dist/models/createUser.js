@@ -23,7 +23,7 @@ class CreateUser {
         return __awaiter(this, void 0, void 0, function* () {
             const db = database_1.getDb();
             yield this.cryptPassword();
-            return db.collection('Users').insertOne(this);
+            return db.collection("Users").insertOne(this);
         });
     }
     cryptPassword() {

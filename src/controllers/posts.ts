@@ -4,7 +4,7 @@ import { Request, Response, RequestHandler } from "express";
 import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
 interface createPostRequest extends Request {
-  userName: string;
+  userId: string;
 }
 
 export const createPost: RequestHandler = async (
@@ -16,7 +16,7 @@ export const createPost: RequestHandler = async (
   if (!errors.isEmpty()) {
     res.status(422).json(errors.array());
   } else {
-    const requestData = { ...req.body, userName: req.userName };
+    const requestData = { ...req.body, userId: req.userId };
     const post: Posts = new Posts(requestData);
 
     try {

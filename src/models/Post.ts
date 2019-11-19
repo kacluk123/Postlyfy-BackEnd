@@ -8,7 +8,9 @@ type postList = Array<{
   addedAt: string;
   tags: string;
 }>;
-
+// addedAt: "$addedAt",
+// postContent: "$postContent",
+// tags: "$tags"
 export default class Posts {
   public static getPosts({
     limit,
@@ -23,7 +25,29 @@ export default class Posts {
 
     return db
       .collection("posts")
-      .find({ tags: tag })
+      .aggregate([
+        { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
+        {
+          $lookup: {
+            from: "Users",
+            localField: "postsId",
+            foreignField: "_id",
+            as: "userDetails"
+          }
+        },
+        {
+          $addFields: {
+            createdBy: {
+              $cond: {
+                if: { $ne: ["$userDetails", []] },
+                then: { $arrayElemAt: ["$userDetails.name", 0] },
+                else: "$createdBy"
+              }
+            }
+          }
+        },
+        { $project: { postsId: 0, userDetails: 0 } }
+      ])
       .limit(limit)
       .skip(offset)
       .sort({ addedAt: -1 })
@@ -40,12 +64,12 @@ export default class Posts {
   }
 
   protected post: string;
-  protected userName: string;
+  protected userId: string;
   protected tags: string[];
 
-  constructor({ post, userName, tags }) {
+  constructor({ post, userId, tags }) {
     this.post = post;
-    this.userName = userName;
+    this.userId = userId;
     this.tags = tags;
   }
 
@@ -57,7 +81,7 @@ export default class Posts {
 
   public postToSaveToDb() {
     return {
-      createdBy: this.userName,
+      createdBy: this.userId,
       postContent: this.post,
       tags: this.removeHashTags(this.tags),
       addedAt: new Date()

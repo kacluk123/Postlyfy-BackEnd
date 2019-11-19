@@ -1,12 +1,37 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../util/database");
+// addedAt: "$addedAt",
+// postContent: "$postContent",
+// tags: "$tags"
 class Posts {
     static getPosts({ limit, offset, tag }) {
         const db = database_1.getDb();
         return db
             .collection("posts")
-            .find({ tags: tag })
+            .aggregate([
+            { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
+            {
+                $lookup: {
+                    from: "Users",
+                    localField: "postsId",
+                    foreignField: "_id",
+                    as: "userDetails"
+                }
+            },
+            {
+                $addFields: {
+                    createdBy: {
+                        $cond: {
+                            if: { $ne: ["$userDetails", []] },
+                            then: { $arrayElemAt: ["$userDetails.name", 0] },
+                            else: "$createdBy"
+                        }
+                    }
+                }
+            },
+            { $project: { postsId: 0, userDetails: 0 } }
+        ])
             .limit(limit)
             .skip(offset)
             .sort({ addedAt: -1 })
@@ -19,9 +44,9 @@ class Posts {
             .find({ tags: tag })
             .count();
     }
-    constructor({ post, userName, tags }) {
+    constructor({ post, userId, tags }) {
         this.post = post;
-        this.userName = userName;
+        this.userId = userId;
         this.tags = tags;
     }
     savePostToDb() {
@@ -30,7 +55,7 @@ class Posts {
     }
     postToSaveToDb() {
         return {
-            createdBy: this.userName,
+            createdBy: this.userId,
             postContent: this.post,
             tags: this.removeHashTags(this.tags),
             addedAt: new Date()
