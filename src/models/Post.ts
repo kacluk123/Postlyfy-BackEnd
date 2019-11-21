@@ -7,6 +7,7 @@ type postList = Array<{
   postContent: string;
   addedAt: string;
   tags: string;
+  comments: [];
 }>;
 // addedAt: "$addedAt",
 // postContent: "$postContent",
@@ -26,6 +27,7 @@ export default class Posts {
     return db
       .collection("posts")
       .aggregate([
+        { $match: { tags: tag } },
         { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
         {
           $lookup: {
@@ -84,7 +86,8 @@ export default class Posts {
       createdBy: this.userId,
       postContent: this.post,
       tags: this.removeHashTags(this.tags),
-      addedAt: new Date()
+      addedAt: new Date(),
+      comments: []
     };
   }
 

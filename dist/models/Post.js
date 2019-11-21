@@ -10,6 +10,7 @@ class Posts {
         return db
             .collection("posts")
             .aggregate([
+            { $match: { tags: tag } },
             { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
             {
                 $lookup: {
@@ -58,7 +59,8 @@ class Posts {
             createdBy: this.userId,
             postContent: this.post,
             tags: this.removeHashTags(this.tags),
-            addedAt: new Date()
+            addedAt: new Date(),
+            comments: []
         };
     }
     removeHashTags(arratToRemoveFirstLetter) {

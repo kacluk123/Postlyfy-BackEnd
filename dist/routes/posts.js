@@ -13,9 +13,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const controller = __importStar(require("../controllers/posts"));
 const posts_1 = require("../validation/posts");
+const comment_1 = require("../validation/comment");
 const is_auth_1 = __importDefault(require("../middleware/is-auth"));
 const router = express_1.default.Router();
-router.post('/add-post', posts_1.createPost, is_auth_1.default, controller.createPost);
-router.post('/get-posts', controller.getPosts);
+router.post("/posts/add-post", posts_1.createPost, is_auth_1.default, controller.createPost);
+router.post("/posts/get-posts", controller.getPosts);
+router.patch("/posts/add-coment/:postId", is_auth_1.default, comment_1.createComment, controller.addComment);
 exports.default = router;
 //# sourceMappingURL=posts.js.map

@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const Post_1 = __importDefault(require("../models/Post"));
+const Comment_1 = __importDefault(require("../models/Comment"));
 const socket_1 = require("../util/socket");
 exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
@@ -58,6 +59,23 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
     }
     catch (err) {
         console.log(err);
+    }
+});
+exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    const errors = express_validator_1.validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json(errors.array());
+    }
+    else {
+        const constructorParams = Object.assign({}, req.body, { userId: req.userId, postId: req.params.postId });
+        const comment = new Comment_1.default(constructorParams);
+        try {
+            yield post.savePostToDb();
+            res.status(200).json({ message: "Post has been added!" });
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 });
 //# sourceMappingURL=posts.js.map

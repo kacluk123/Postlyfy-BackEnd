@@ -1,11 +1,18 @@
-import express from 'express'
-import * as controller from '../controllers/posts' 
-import { createPost } from '../validation/posts'
-import isAuth from '../middleware/is-auth'
+import express from "express";
+import * as controller from "../controllers/posts";
+import { createPost } from "../validation/posts";
+import { createComment } from "../validation/comment";
+import isAuth from "../middleware/is-auth";
 
 const router = express.Router();
 
-router.post('/add-post', createPost, isAuth, controller.createPost)
-router.post('/get-posts', controller.getPosts)
+router.post("/posts/add-post", createPost, isAuth, controller.createPost);
+router.post("/posts/get-posts", controller.getPosts);
+router.patch(
+  "/posts/add-coment/:postId",
+  isAuth,
+  createComment,
+  controller.addComment
+);
 
-export default router
+export default router;

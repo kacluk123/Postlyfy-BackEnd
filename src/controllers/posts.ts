@@ -1,5 +1,6 @@
 import { validationResult, body } from "express-validator";
 import Posts from "../models/Post";
+import Comment from "../models/Comment";
 import { Request, Response, RequestHandler } from "express";
 import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
@@ -56,5 +57,37 @@ export const getPosts: RequestHandler = async (req: Request, res: Response) => {
     res.status(200).json(response);
   } catch (err) {
     console.log(err);
+  }
+};
+
+interface IAddCommentRequest extends createPostRequest {
+  params: {
+    postId: string;
+  };
+}
+
+export const addComment: RequestHandler = async (
+  req: IAddCommentRequest,
+  res: Response
+) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(422).json(errors.array());
+  } else {
+    const constructorParams = {
+      ...req.body,
+      userId: req.userId,
+      postId: req.params.postId
+    };
+
+    const comment: Comment = new Comment(constructorParams);
+
+    try {
+      await post.savePostToDb();
+      res.status(200).json({ message: "Post has been added!" });
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
