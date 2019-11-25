@@ -14,5 +14,5 @@ router.patch(
   createComment,
   controller.addComment
 );
-
+router.get("/posts/comments/:postId", controller.getComments);
 export default router;

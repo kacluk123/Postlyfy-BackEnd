@@ -60,14 +60,14 @@ export const getPosts: RequestHandler = async (req: Request, res: Response) => {
   }
 };
 
-interface IAddCommentRequest extends createPostRequest {
+interface ICommentRequest extends createPostRequest {
   params: {
     postId: string;
   };
 }
 
 export const addComment: RequestHandler = async (
-  req: IAddCommentRequest,
+  req: ICommentRequest,
   res: Response
 ) => {
   const errors = validationResult(req);
@@ -84,10 +84,25 @@ export const addComment: RequestHandler = async (
     const comment: Comment = new Comment(constructorParams);
 
     try {
-      await post.savePostToDb();
+      await comment.addComment();
       res.status(200).json({ message: "Post has been added!" });
     } catch (err) {
       console.log(err);
     }
+  }
+};
+
+export const getComments: RequestHandler = async (
+  req: ICommentRequest,
+  res: Response
+) => {
+  const postId = req.params.postId;
+
+  try {
+    const commentsList = await Comment.getComments(postId);
+
+    res.status(200).json(commentsList);
+  } catch (err) {
+    console.log(err);
   }
 };

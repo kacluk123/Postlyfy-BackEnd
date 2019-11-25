@@ -70,12 +70,22 @@ exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () 
         const constructorParams = Object.assign({}, req.body, { userId: req.userId, postId: req.params.postId });
         const comment = new Comment_1.default(constructorParams);
         try {
-            yield post.savePostToDb();
+            yield comment.addComment();
             res.status(200).json({ message: "Post has been added!" });
         }
         catch (err) {
             console.log(err);
         }
+    }
+});
+exports.getComments = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    const postId = req.params.postId;
+    try {
+        const commentsList = yield Comment_1.default.getComments(postId);
+        res.status(200).json(commentsList);
+    }
+    catch (err) {
+        console.log(err);
     }
 });
 //# sourceMappingURL=posts.js.map

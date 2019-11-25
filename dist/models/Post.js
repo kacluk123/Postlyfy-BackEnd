@@ -31,7 +31,13 @@ class Posts {
                     }
                 }
             },
-            { $project: { postsId: 0, userDetails: 0 } }
+            {
+                $project: {
+                    postsId: 0,
+                    userDetails: 0,
+                    comments: { $slice: ["$comments", 3] }
+                }
+            }
         ])
             .limit(limit)
             .skip(offset)

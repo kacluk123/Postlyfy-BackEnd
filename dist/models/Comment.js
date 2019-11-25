@@ -13,9 +13,9 @@ class Comment {
     constructor({ comment, userId, postId }) {
         this.addComment = () => {
             const db = database_1.getDb();
-            const postId = new mongodb_1.default.ObjectId(this.postId);
+            const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(this.postId);
             const commentId = new mongodb_1.ObjectId();
-            db.collection("posts").updateOne({ _id: postId }, {
+            db.collection("posts").updateOne({ _id: convertedToMongoObjectIdPostId }, {
                 $addToSet: {
                     comments: {
                         _id: commentId,
@@ -31,5 +31,17 @@ class Comment {
         this.postId = postId;
     }
 }
+Comment.getComments = (postId) => {
+    const db = database_1.getDb();
+    const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(postId);
+    return db.collection("posts").aggregate([
+        { $match: { _id: convertedToMongoObjectIdPostId } },
+        {
+            $project: {
+                comments: { $slice: ["$comments", -3] }
+            }
+        }
+    ]);
+};
 exports.default = Comment;
 //# sourceMappingURL=Comment.js.map
