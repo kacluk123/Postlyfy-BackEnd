@@ -5,7 +5,7 @@ exports.createComment = [
     express_validator_1.check("comment")
         .not()
         .isEmpty()
-        .isLength({ min: 10 })
-        .withMessage("must be at least 10 chars long")
+        .isLength({ min: 6 })
+        .withMessage("must be at least 6 chars long")
 ];
 //# sourceMappingURL=comment.js.map

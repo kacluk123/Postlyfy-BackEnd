@@ -51,8 +51,8 @@ export default class Posts {
         {
           $project: {
             postsId: 0,
-            userDetails: 0,
-            comments: { $slice: ["$comments", 3] }
+            userDetails: 0
+            // comments: { $slice: ["$comments", 3] }
           }
         }
       ])

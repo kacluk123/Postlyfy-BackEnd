@@ -63,6 +63,7 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
 });
 exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
+    console.log(req);
     if (!errors.isEmpty()) {
         res.status(422).json(errors.array());
     }

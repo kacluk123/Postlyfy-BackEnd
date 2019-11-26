@@ -71,7 +71,7 @@ export const addComment: RequestHandler = async (
   res: Response
 ) => {
   const errors = validationResult(req);
-
+  console.log(req);
   if (!errors.isEmpty()) {
     res.status(422).json(errors.array());
   } else {
@@ -80,7 +80,6 @@ export const addComment: RequestHandler = async (
       userId: req.userId,
       postId: req.params.postId
     };
-
     const comment: Comment = new Comment(constructorParams);
 
     try {
