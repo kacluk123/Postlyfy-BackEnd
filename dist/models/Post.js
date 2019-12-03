@@ -10,32 +10,49 @@ class Posts {
         return db
             .collection("posts")
             .aggregate([
-            { $match: { tags: tag } },
-            { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
+            // { $match: { tags: tag } },
+            // { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
+            // {
+            //   $lookup: {
+            //     from: "Users",
+            //     localField: "postsId",
+            //     foreignField: "_id",
+            //     as: "userDetails"
+            //   }
+            // },
+            // {
+            //   $addFields: {
+            //     createdBy: {
+            //       $cond: {
+            //         if: { $ne: ["$userDetails", []] },
+            //         then: { $arrayElemAt: ["$userDetails.name", 0] },
+            //         else: "$createdBy"
+            //       }
+            //     }
+            //   }
+            // },
+            { $unwind: "$comments" },
+            { $addFields: { authorId: { $toObjectId: "$comments.author" } } },
             {
                 $lookup: {
                     from: "Users",
-                    localField: "postsId",
+                    localField: "authorId",
                     foreignField: "_id",
-                    as: "userDetails"
+                    as: "commentAuthorDetails"
                 }
             },
             {
-                $addFields: {
-                    createdBy: {
-                        $cond: {
-                            if: { $ne: ["$userDetails", []] },
-                            then: { $arrayElemAt: ["$userDetails.name", 0] },
-                            else: "$createdBy"
-                        }
+                $project: {
+                    "comments.author": {
+                        $arrayElemAt: ["$commentAuthorDetails.name", 0]
                     }
                 }
             },
             {
                 $project: {
                     postsId: 0,
-                    userDetails: 0
-                    // comments: { $slice: ["$comments", 3] }
+                    userDetails: 0,
+                    comments: { $push: "$posts" }
                 }
             }
         ])
