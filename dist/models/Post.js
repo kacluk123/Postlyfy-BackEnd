@@ -31,28 +31,28 @@ class Posts {
             //     }
             //   }
             // },
-            { $unwind: "$comments" },
+            // { $unwind: "$comments" },
             { $addFields: { authorId: { $toObjectId: "$comments.author" } } },
             {
                 $lookup: {
                     from: "Users",
                     localField: "authorId",
-                    foreignField: "_id",
+                    foreignField: "$comments._id",
                     as: "commentAuthorDetails"
                 }
             },
             {
-                $project: {
-                    "comments.author": {
-                        $arrayElemAt: ["$commentAuthorDetails.name", 0]
+                $group: {
+                    _id: {
+                        author: "$commentAuthorDetails.name",
+                        _id: "$comments._id"
                     }
                 }
             },
             {
                 $project: {
                     postsId: 0,
-                    userDetails: 0,
-                    comments: { $push: "$posts" }
+                    userDetails: 0
                 }
             }
         ])
