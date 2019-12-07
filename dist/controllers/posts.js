@@ -14,10 +14,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const Post_1 = __importDefault(require("../models/Post"));
 const Comment_1 = __importDefault(require("../models/Comment"));
-const socket_1 = require("../util/socket");
 exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
-    console.log(req);
     if (!errors.isEmpty()) {
         res.status(422).json(errors.array());
     }
@@ -25,12 +23,12 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         const requestData = Object.assign({}, req.body, { userId: req.userId });
         const post = new Post_1.default(requestData);
         try {
-            yield post.savePostToDb();
-            socket_1.getIo().emit("post", {
-                action: "create",
-                post: post.postToSaveToDb()
-            });
-            res.status(200).json({ message: "Post has been added!" });
+            const createdPost = yield post.savePostToDb();
+            // getIo().emit("post", {
+            //   action: "create",
+            //   post: post.postToSaveToDb()
+            // });
+            res.status(200).json(createdPost.ops[0]);
         }
         catch (err) {
             console.log(err);
@@ -40,13 +38,14 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
 exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const getPosts = Post_1.default.getPosts;
     const getTotalPostNumber = Post_1.default.countPosts;
-    const offset = req.body.offset;
-    const limit = req.body.limit;
-    const tag = req.body.tag;
+    const offset = req.query.offset;
+    const limit = req.query.limit;
+    const tag = req.params.tag;
+    console.log(offset, limit, tag);
     try {
         const postsList = yield getPosts({
-            limit,
-            offset,
+            limit: Number(limit),
+            offset: Number(offset),
             tag
         });
         const postsTotalNumber = yield getTotalPostNumber(tag);
@@ -63,7 +62,6 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
 });
 exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
-    console.log(req);
     if (!errors.isEmpty()) {
         res.status(422).json(errors.array());
     }

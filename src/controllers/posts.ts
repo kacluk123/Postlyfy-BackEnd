@@ -13,7 +13,7 @@ export const createPost: RequestHandler = async (
   res: Response
 ) => {
   const errors = validationResult(req);
-  console.log(req);
+
   if (!errors.isEmpty()) {
     res.status(422).json(errors.array());
   } else {
@@ -21,29 +21,43 @@ export const createPost: RequestHandler = async (
     const post: Posts = new Posts(requestData);
 
     try {
-      await post.savePostToDb();
-      getIo().emit("post", {
-        action: "create",
-        post: post.postToSaveToDb()
-      });
-      res.status(200).json({ message: "Post has been added!" });
+      const createdPost = await post.savePostToDb();
+      // getIo().emit("post", {
+      //   action: "create",
+      //   post: post.postToSaveToDb()
+      // });
+      res.status(200).json(createdPost.ops[0]);
     } catch (err) {
       console.log(err);
     }
   }
 };
 
-export const getPosts: RequestHandler = async (req: Request, res: Response) => {
+interface GetPostsRequest extends Request {
+  query: {
+    offset: string;
+    limit: string;
+  };
+  params: {
+    tag: string;
+  };
+}
+
+export const getPosts: RequestHandler = async (
+  req: GetPostsRequest,
+  res: Response
+) => {
   const getPosts = Posts.getPosts;
   const getTotalPostNumber = Posts.countPosts;
-  const offset = req.body.offset;
-  const limit = req.body.limit;
-  const tag = req.body.tag;
 
+  const offset = req.query.offset;
+  const limit = req.query.limit;
+  const tag = req.params.tag;
+  console.log(offset, limit, tag);
   try {
     const postsList = await getPosts({
-      limit,
-      offset,
+      limit: Number(limit),
+      offset: Number(offset),
       tag
     });
 
@@ -71,7 +85,7 @@ export const addComment: RequestHandler = async (
   res: Response
 ) => {
   const errors = validationResult(req);
-  console.log(req);
+
   if (!errors.isEmpty()) {
     res.status(422).json(errors.array());
   } else {

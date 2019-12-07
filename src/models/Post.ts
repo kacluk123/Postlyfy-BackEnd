@@ -1,5 +1,6 @@
 import { getDb } from "../util/database";
 import mongodb from "mongodb";
+import { string } from "prop-types";
 
 type postList = Array<{
   _id: string;
@@ -27,45 +28,45 @@ export default class Posts {
     return db
       .collection("posts")
       .aggregate([
-        // { $match: { tags: tag } },
-        // { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
-        // {
-        //   $lookup: {
-        //     from: "Users",
-        //     localField: "postsId",
-        //     foreignField: "_id",
-        //     as: "userDetails"
-        //   }
-        // },
-        // {
-        //   $addFields: {
-        //     createdBy: {
-        //       $cond: {
-        //         if: { $ne: ["$userDetails", []] },
-        //         then: { $arrayElemAt: ["$userDetails.name", 0] },
-        //         else: "$createdBy"
-        //       }
-        //     }
-        //   }
-        // },
-        // { $unwind: "$comments" },
-        { $addFields: { authorId: { $toObjectId: "$comments.author" } } },
+        { $match: { tags: tag } },
+        { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
         {
           $lookup: {
             from: "Users",
-            localField: "authorId",
-            foreignField: "$comments._id",
-            as: "commentAuthorDetails"
+            localField: "postsId",
+            foreignField: "_id",
+            as: "userDetails"
           }
         },
         {
-          $group: {
-            _id: {
-              author: "$commentAuthorDetails.name",
-              _id: "$comments._id"
+          $addFields: {
+            createdBy: {
+              $cond: {
+                if: { $ne: ["$userDetails", []] },
+                then: { $arrayElemAt: ["$userDetails.name", 0] },
+                else: "$createdBy"
+              }
             }
           }
         },
+        // { $unwind: "$comments" },
+        // { $addFields: { authorId: { $toObjectId: "$comments.author" } } },
+        // {
+        //   $lookup: {
+        //     from: "Users",
+        //     localField: "authorId",
+        //     foreignField: "$_id",
+        //     as: "commentAuthorDetails"
+        //   }
+        // },
+        // {
+        //   $group: {
+        //     _id: {
+        //       author: "$commentAuthorDetails.name",
+        //       _id: "$comments._id"
+        //     }
+        //   }
+        // },
         {
           $project: {
             postsId: 0,
