@@ -33,7 +33,7 @@ export const createPost: RequestHandler = async (
   }
 };
 
-interface GetPostsRequest extends Request {
+interface IGetPostsRequest extends Request {
   query: {
     offset: string;
     limit: string;
@@ -44,8 +44,8 @@ interface GetPostsRequest extends Request {
 }
 
 export const getPosts: RequestHandler = async (
-  req: GetPostsRequest,
-  res: Response
+  req: IGetPostsRequest,
+  res: Response,
 ) => {
   const getPosts = Posts.getPosts;
   const getTotalPostNumber = Posts.countPosts;
@@ -53,12 +53,12 @@ export const getPosts: RequestHandler = async (
   const offset = req.query.offset;
   const limit = req.query.limit;
   const tag = req.params.tag;
-  console.log(offset, limit, tag);
+
   try {
     const postsList = await getPosts({
-      limit: Number(limit),
-      offset: Number(offset),
-      tag
+      limit,
+      offset,
+      tag,
     });
 
     const postsTotalNumber = await getTotalPostNumber(tag);
@@ -66,7 +66,9 @@ export const getPosts: RequestHandler = async (
     const response = {
       isError: false,
       posts: postsList,
-      total: postsTotalNumber
+      offset: Number(offset),
+      total: postsTotalNumber,
+      limit: Number(limit),
     };
     res.status(200).json(response);
   } catch (err) {
@@ -82,7 +84,7 @@ interface ICommentRequest extends createPostRequest {
 
 export const addComment: RequestHandler = async (
   req: ICommentRequest,
-  res: Response
+  res: Response,
 ) => {
   const errors = validationResult(req);
 
@@ -91,8 +93,8 @@ export const addComment: RequestHandler = async (
   } else {
     const constructorParams = {
       ...req.body,
+      postId: req.params.postId,
       userId: req.userId,
-      postId: req.params.postId
     };
     const comment: Comment = new Comment(constructorParams);
 
@@ -107,7 +109,7 @@ export const addComment: RequestHandler = async (
 
 export const getComments: RequestHandler = async (
   req: ICommentRequest,
-  res: Response
+  res: Response,
 ) => {
   const postId = req.params.postId;
 

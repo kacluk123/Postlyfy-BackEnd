@@ -7,6 +7,7 @@ const database_1 = require("../util/database");
 class Posts {
     static getPosts({ limit, offset, tag }) {
         const db = database_1.getDb();
+        console.log(limit, offset, tag);
         return db
             .collection("posts")
             .aggregate([
@@ -54,10 +55,10 @@ class Posts {
                     postsId: 0,
                     userDetails: 0
                 }
-            }
+            },
+            { $skip: Number(offset) },
+            { $limit: Number(limit) }
         ])
-            .limit(limit)
-            .skip(offset)
             .sort({ addedAt: -1 })
             .toArray();
     }

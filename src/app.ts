@@ -40,5 +40,5 @@ const dbConnect = (client: mongodb.MongoClient) => {
 };
 
 mongoConnect({
-  cb: dbConnect
+  cb: dbConnect,
 });

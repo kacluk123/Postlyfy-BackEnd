@@ -19,12 +19,12 @@ export default class Posts {
     offset,
     tag
   }: {
-    limit: number;
-    offset: number;
+    limit: string;
+    offset: string;
     tag: string;
   }): Promise<postList> {
     const db = getDb();
-
+    console.log(limit, offset, tag);
     return db
       .collection("posts")
       .aggregate([
@@ -72,10 +72,10 @@ export default class Posts {
             postsId: 0,
             userDetails: 0
           }
-        }
+        },
+        { $skip: Number(offset) },
+        { $limit: Number(limit) }
       ])
-      .limit(limit)
-      .skip(offset)
       .sort({ addedAt: -1 })
       .toArray();
   }

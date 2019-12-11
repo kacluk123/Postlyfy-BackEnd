@@ -41,18 +41,19 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const offset = req.query.offset;
     const limit = req.query.limit;
     const tag = req.params.tag;
-    console.log(offset, limit, tag);
     try {
         const postsList = yield getPosts({
-            limit: Number(limit),
-            offset: Number(offset),
-            tag
+            limit,
+            offset,
+            tag,
         });
         const postsTotalNumber = yield getTotalPostNumber(tag);
         const response = {
             isError: false,
             posts: postsList,
-            total: postsTotalNumber
+            offset: Number(offset),
+            total: postsTotalNumber,
+            limit: Number(limit),
         };
         res.status(200).json(response);
     }
@@ -66,7 +67,7 @@ exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () 
         res.status(422).json(errors.array());
     }
     else {
-        const constructorParams = Object.assign({}, req.body, { userId: req.userId, postId: req.params.postId });
+        const constructorParams = Object.assign({}, req.body, { postId: req.params.postId, userId: req.userId });
         const comment = new Comment_1.default(constructorParams);
         try {
             yield comment.addComment();

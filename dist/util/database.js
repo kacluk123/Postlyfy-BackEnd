@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = __importDefault(require("mongodb"));
 const MongoClient = mongodb_1.default.MongoClient;
-const databaseUrl = 'mongodb+srv://sakuy:123@szkolna17-k7gpb.mongodb.net/szkolna17?retryWrites=true&w=majority';
+const databaseUrl = "mongodb+srv://sakuy:123@szkolna17-k7gpb.mongodb.net/szkolna17?retryWrites=true&w=majority";
 let _db;
-const dbconnect = (databaseUrl) => __awaiter(this, void 0, void 0, function* () { return yield MongoClient.connect(databaseUrl); });
+const dbconnect = (dbUrl) => __awaiter(this, void 0, void 0, function* () { return yield MongoClient.connect(dbUrl); });
 const mongoConnect = ({ cb }) => __awaiter(this, void 0, void 0, function* () {
     try {
         _db = yield dbconnect(databaseUrl);
@@ -27,9 +27,9 @@ const mongoConnect = ({ cb }) => __awaiter(this, void 0, void 0, function* () {
 });
 exports.getDb = () => {
     if (_db) {
-        return _db.db('szkolna17-db');
+        return _db.db("szkolna17-db");
     }
-    throw new Error('Database not found');
+    throw new Error("Database not found");
 };
 exports.default = mongoConnect;
 //# sourceMappingURL=database.js.map

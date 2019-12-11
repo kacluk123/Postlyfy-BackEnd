@@ -33,6 +33,6 @@ const dbConnect = (client) => {
     });
 };
 database_1.default({
-    cb: dbConnect
+    cb: dbConnect,
 });
 //# sourceMappingURL=app.js.map
