@@ -1,8 +1,16 @@
-import { getDb } from "../util/database";
-import mongodb from "mongodb";
 import bcrypt from "bcrypt";
+import mongodb from "mongodb";
+import { getDb } from "../util/database";
 
-export default class CreateUser {
+export default class User {
+  public static async getUserById(userId: string): Promise<void> {
+    const userIdConvertedToMongoID = new mongodb.ObjectId(userId);
+    const db = getDb();
+    const searchedUser = await db.collection("Users").findOne({ _id: userIdConvertedToMongoID });
+
+    return searchedUser;
+  }
+
   private name: string;
   private email: string;
   private password: string;

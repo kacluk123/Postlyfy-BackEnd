@@ -24,10 +24,6 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         const post = new Post_1.default(requestData);
         try {
             const createdPost = yield post.savePostToDb();
-            // getIo().emit("post", {
-            //   action: "create",
-            //   post: post.postToSaveToDb()
-            // });
             res.status(200).json(createdPost.ops[0]);
         }
         catch (err) {

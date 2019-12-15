@@ -35,8 +35,8 @@ export default class Posts {
             from: "Users",
             localField: "postsId",
             foreignField: "_id",
-            as: "userDetails"
-          }
+            as: "userDetails",
+          },
         },
         {
           $addFields: {
@@ -44,10 +44,10 @@ export default class Posts {
               $cond: {
                 if: { $ne: ["$userDetails", []] },
                 then: { $arrayElemAt: ["$userDetails.name", 0] },
-                else: "$createdBy"
-              }
-            }
-          }
+                else: "$createdBy",
+              },
+            },
+          },
         },
         // { $unwind: "$comments" },
         // { $addFields: { authorId: { $toObjectId: "$comments.author" } } },
@@ -70,11 +70,11 @@ export default class Posts {
         {
           $project: {
             postsId: 0,
-            userDetails: 0
-          }
+            userDetails: 0,
+          },
         },
         { $skip: Number(offset) },
-        { $limit: Number(limit) }
+        { $limit: Number(limit) },
       ])
       .sort({ addedAt: -1 })
       .toArray();

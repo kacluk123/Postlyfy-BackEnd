@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // import CreateUser from '../models/createUser'
 const express_validator_1 = require("express-validator");
-const createUser_1 = __importDefault(require("../models/createUser"));
+const User_1 = __importDefault(require("../models/User"));
 const database_1 = require("../util/database");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -24,7 +24,7 @@ exports.signup = (req, res) => __awaiter(this, void 0, void 0, function* () {
         res.status(422).json({ messages: errors.array(), isError: true });
     }
     else {
-        const user = new createUser_1.default(req.body);
+        const user = new User_1.default(req.body);
         try {
             yield user.addUserToDb();
             res.status(201).json({
@@ -60,7 +60,7 @@ exports.login = (req, res, next) => __awaiter(this, void 0, void 0, function* ()
     const token = jsonwebtoken_1.default.sign({
         email: searchedUser.email,
         userId: searchedUser._id.toString(),
-        userName: searchedUser.name
+        userName: searchedUser.name,
     }, jwt_secret_key_1.default, { expiresIn: "24h" });
     res
         .cookie("token", token, { httpOnly: false, secure: false })

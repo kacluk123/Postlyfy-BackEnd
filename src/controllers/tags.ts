@@ -6,7 +6,7 @@ export const getTags: RequestHandler = async (req: Request, res: Response) => {
     const tags = await Tags.getAllTags();
     res.status(200).json({
       isError: false,
-      tags
+      tags,
     });
   } catch (err) {
     console.log(err);

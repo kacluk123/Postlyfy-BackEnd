@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const auth_1 = __importDefault(require("./routes/auth"));
 const posts_1 = __importDefault(require("./routes/posts"));
 const tags_1 = __importDefault(require("./routes/tags"));
+const user_1 = __importDefault(require("./routes/user"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const database_1 = __importDefault(require("./util/database"));
 const socket_1 = require("./util/socket");
@@ -25,6 +26,7 @@ app.use(body_parser_1.default.json());
 app.use(auth_1.default);
 app.use(posts_1.default);
 app.use(tags_1.default);
+app.use(user_1.default);
 const dbConnect = (client) => {
     const server = app.listen(port);
     const io = socket_1.init(server);

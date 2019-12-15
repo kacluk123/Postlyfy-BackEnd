@@ -22,10 +22,6 @@ export const createPost: RequestHandler = async (
 
     try {
       const createdPost = await post.savePostToDb();
-      // getIo().emit("post", {
-      //   action: "create",
-      //   post: post.postToSaveToDb()
-      // });
       res.status(200).json(createdPost.ops[0]);
     } catch (err) {
       console.log(err);

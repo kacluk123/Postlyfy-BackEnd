@@ -12,8 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const mongodb_1 = __importDefault(require("mongodb"));
 const database_1 = require("../util/database");
 class User {
+    static getUserById(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userIdConvertedToMongoID = new mongodb_1.default.ObjectId(userId);
+            const db = database_1.getDb();
+            const searchedUser = yield db.collection("Users").findOne({ _id: userIdConvertedToMongoID });
+            return searchedUser;
+        });
+    }
     constructor({ name, email, password }) {
         this.name = name;
         this.email = email;
@@ -37,10 +46,6 @@ class User {
             }
         });
     }
-    static getUserById(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
 }
 exports.default = User;
-//# sourceMappingURL=createUser.js.map
+//# sourceMappingURL=User.js.map

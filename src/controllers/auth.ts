@@ -1,6 +1,6 @@
 // import CreateUser from '../models/createUser'
 import { validationResult } from "express-validator";
-import CreateUser from "../models/createUser";
+import User from "../models/User";
 import { Request, Response, RequestHandler, NextFunction } from "express";
 import { getDb } from "../util/database";
 import bcrypt from "bcrypt";
@@ -13,7 +13,7 @@ export const signup: RequestHandler = async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     res.status(422).json({ messages: errors.array(), isError: true });
   } else {
-    const user: CreateUser = new CreateUser(req.body);
+    const user: User = new User(req.body);
 
     try {
       await user.addUserToDb();
@@ -64,10 +64,10 @@ export const login: RequestHandler = async (
     {
       email: searchedUser.email,
       userId: searchedUser._id.toString(),
-      userName: searchedUser.name
+      userName: searchedUser.name,
     },
     secretKey,
-    { expiresIn: "24h" }
+    { expiresIn: "24h" },
   );
 
   res

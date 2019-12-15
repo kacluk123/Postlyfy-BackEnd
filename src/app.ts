@@ -2,6 +2,7 @@ import express from "express";
 import signupRoutes from "./routes/auth";
 import postRoutes from "./routes/posts";
 import tagsRoutes from "./routes/tags";
+import userRoutes from "./routes/user";
 import bodyPaser from "body-parser";
 import mongoConnect from "./util/database";
 import mongodb from "mongodb";
@@ -29,6 +30,7 @@ app.use(bodyPaser.json());
 app.use(signupRoutes);
 app.use(postRoutes);
 app.use(tagsRoutes);
+app.use(userRoutes);
 
 const dbConnect = (client: mongodb.MongoClient) => {
   const server = app.listen(port);
