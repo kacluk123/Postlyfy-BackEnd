@@ -76,6 +76,7 @@ interface ICommentRequest extends createPostRequest {
   params: {
     postId: string;
   };
+  userName: string;
 }
 
 export const addComment: RequestHandler = async (
@@ -83,20 +84,20 @@ export const addComment: RequestHandler = async (
   res: Response,
 ) => {
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
     res.status(422).json(errors.array());
   } else {
     const constructorParams = {
       ...req.body,
       postId: req.params.postId,
-      userId: req.userId,
+      userName: req.userName,
     };
     const comment: Comment = new Comment(constructorParams);
 
     try {
       await comment.addComment();
-      res.status(200).json({ message: "Post has been added!" });
+      
+      res.status(200).json({ isError: false, comment: comment.commentInstance });
     } catch (err) {
       console.log(err);
     }

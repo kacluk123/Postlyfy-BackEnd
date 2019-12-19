@@ -2,7 +2,7 @@ import { getDb } from "../util/database";
 import mongodb, { ObjectId } from "mongodb";
 
 interface ICommentConstructorParams {
-  userId: string;
+  userName: string;
   comment: string;
   postId: string;
 }
@@ -22,33 +22,37 @@ export default class Comment {
     ]);
   };
 
-  userId: string;
-  comment: string;
-  postId: string;
+  private author: string;
+  private content: string;
+  private postId: string;
+  private addedAt: Date;
+  private _id: mongodb.ObjectId;
 
-  constructor({ comment, userId, postId }: ICommentConstructorParams) {
-    this.comment = comment;
-    this.userId = userId;
+  constructor({ comment, userName, postId }: ICommentConstructorParams) {
+    this.content = comment;
+    this.author = userName;
     this.postId = postId;
+    this.addedAt = new Date();
+    this._id = new ObjectId();
   }
 
-  public addComment = () => {
+  public get commentInstance() {
+    const { addComment, ...commentData } = this;
+
+    return commentData;
+  }
+
+  public addComment = async () => {
     const db = getDb();
     const convertedToMongoObjectIdPostId = new mongodb.ObjectId(this.postId);
     const commentId = new ObjectId();
-
-    db.collection("posts").updateOne(
+    await db.collection("posts").updateOne(
       { _id: convertedToMongoObjectIdPostId },
       {
         $addToSet: {
-          comments: {
-            _id: commentId,
-            content: this.comment,
-            author: this.userId,
-            addedAt: new Date()
-          }
-        }
-      }
+          comments: this.commentInstance;
+        },
+      },
     );
-  };
+  }
 }

@@ -12,7 +12,7 @@ router.patch(
   "/posts/add-comment/:postId",
   createComment,
   isAuth,
-  controller.addComment
+  controller.addComment,
 );
 router.get("/posts/comments/:postId", controller.getComments);
 export default router;

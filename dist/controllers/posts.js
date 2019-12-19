@@ -63,11 +63,11 @@ exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () 
         res.status(422).json(errors.array());
     }
     else {
-        const constructorParams = Object.assign({}, req.body, { postId: req.params.postId, userId: req.userId });
+        const constructorParams = Object.assign({}, req.body, { postId: req.params.postId, userName: req.userName });
         const comment = new Comment_1.default(constructorParams);
         try {
             yield comment.addComment();
-            res.status(200).json({ message: "Post has been added!" });
+            res.status(200).json({ isError: false, comment: comment.commentInstance });
         }
         catch (err) {
             console.log(err);
