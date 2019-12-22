@@ -16,10 +16,11 @@ export default class Comment {
       { $match: { _id: convertedToMongoObjectIdPostId } },
       {
         $project: {
-          comments: { $slice: ["$comments", -3] }
-        }
-      }
-    ]);
+          _id: 0,
+          comments: { $slice: ["$comments", 3, { $size: "$comments" }]},
+        },
+      },
+    ]).toArray();
   };
 
   private author: string;
@@ -45,12 +46,12 @@ export default class Comment {
   public addComment = async () => {
     const db = getDb();
     const convertedToMongoObjectIdPostId = new mongodb.ObjectId(this.postId);
-    const commentId = new ObjectId();
+
     await db.collection("posts").updateOne(
       { _id: convertedToMongoObjectIdPostId },
       {
         $addToSet: {
-          comments: this.commentInstance;
+          comments: this.commentInstance,
         },
       },
     );

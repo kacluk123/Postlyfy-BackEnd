@@ -33,10 +33,9 @@ class Comment {
         this.addComment = () => __awaiter(this, void 0, void 0, function* () {
             const db = database_1.getDb();
             const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(this.postId);
-            const commentId = new mongodb_1.ObjectId();
             yield db.collection("posts").updateOne({ _id: convertedToMongoObjectIdPostId }, {
                 $addToSet: {
-                    comments: this.commentInstance
+                    comments: this.commentInstance,
                 },
             });
         });
@@ -58,10 +57,11 @@ Comment.getComments = (postId) => {
         { $match: { _id: convertedToMongoObjectIdPostId } },
         {
             $project: {
-                comments: { $slice: ["$comments", -3] }
-            }
-        }
-    ]);
+                _id: 0,
+                comments: { $slice: ["$comments", 3, { $size: "$comments" }] },
+            },
+        },
+    ]).toArray();
 };
 exports.default = Comment;
 //# sourceMappingURL=Comment.js.map

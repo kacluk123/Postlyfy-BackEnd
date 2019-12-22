@@ -11,8 +11,9 @@ class Posts {
         return db
             .collection("posts")
             .aggregate([
+            { $sort: { addedAt: -1 } },
             { $match: { tags: tag } },
-            { $addFields: { postsId: { $toObjectId: "$createdBy" } } },
+            { $addFields: { postsId: { $toObjectId: "$createdBy" }, comments: { $slice: ["$comments", 3] } } },
             {
                 $lookup: {
                     from: "Users",
@@ -59,7 +60,6 @@ class Posts {
             { $skip: Number(offset) },
             { $limit: Number(limit) },
         ])
-            .sort({ addedAt: -1 })
             .toArray();
     }
     static countPosts(tag) {

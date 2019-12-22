@@ -77,8 +77,12 @@ exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () 
 exports.getComments = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const postId = req.params.postId;
     try {
-        const commentsList = yield Comment_1.default.getComments(postId);
-        res.status(200).json(commentsList);
+        const [commentsList] = yield Comment_1.default.getComments(postId);
+        res.status(200).json({
+            comments: commentsList.comments,
+            postId,
+            isError: false,
+        });
     }
     catch (err) {
         console.log(err);

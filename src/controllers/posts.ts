@@ -111,9 +111,13 @@ export const getComments: RequestHandler = async (
   const postId = req.params.postId;
 
   try {
-    const commentsList = await Comment.getComments(postId);
+    const [ commentsList ] = await Comment.getComments(postId);
 
-    res.status(200).json(commentsList);
+    res.status(200).json({
+      comments: commentsList.comments,
+      postId,
+      isError: false,
+    });
   } catch (err) {
     console.log(err);
   }
