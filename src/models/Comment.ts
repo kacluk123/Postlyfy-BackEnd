@@ -8,7 +8,7 @@ interface ICommentConstructorParams {
 }
 
 export default class Comment {
-  public static getComments = (postId: string) => {
+  public static getComments = (postId: string, skip: number) => {
     const db = getDb();
     const convertedToMongoObjectIdPostId = new mongodb.ObjectId(postId);
 
@@ -17,7 +17,7 @@ export default class Comment {
       {
         $project: {
           _id: 0,
-          comments: { $slice: ["$comments", 3, { $size: "$comments" }]},
+          comments: 1,
         },
       },
     ]).toArray();

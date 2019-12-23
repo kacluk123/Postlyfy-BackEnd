@@ -104,14 +104,24 @@ export const addComment: RequestHandler = async (
   }
 };
 
+interface IGetCommentRequest {
+  query: {
+    skip: number;
+  };
+  params: {
+    postId: string;
+  };
+}
+
 export const getComments: RequestHandler = async (
-  req: ICommentRequest,
+  req: IGetCommentRequest,
   res: Response,
 ) => {
   const postId = req.params.postId;
+  const skip = Number(req.query.skip);
 
   try {
-    const [ commentsList ] = await Comment.getComments(postId);
+    const [ commentsList ] = await Comment.getComments(postId, skip);
 
     res.status(200).json({
       comments: commentsList.comments,

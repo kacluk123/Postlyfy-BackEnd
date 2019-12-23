@@ -13,7 +13,12 @@ class Posts {
             .aggregate([
             { $sort: { addedAt: -1 } },
             { $match: { tags: tag } },
-            { $addFields: { postsId: { $toObjectId: "$createdBy" }, comments: { $slice: ["$comments", 3] } } },
+            // { $addFields: { comments: { $reverseArray: "$comments" } }},
+            { $addFields: {
+                    postsId: { $toObjectId: "$createdBy" },
+                    comments: { $slice: ["$comments", 3] },
+                    totalComments: { $size: "$comments" }
+                } },
             {
                 $lookup: {
                     from: "Users",

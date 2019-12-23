@@ -30,7 +30,11 @@ export default class Posts {
       .aggregate([
         { $sort: { addedAt : -1 }},
         { $match: { tags: tag } },
-        { $addFields: { postsId: { $toObjectId: "$createdBy" }, comments: { $slice: [ "$comments", 3 ] } } },
+        // { $addFields: { comments: { $reverseArray: "$comments" } }},
+        { $addFields: {
+          postsId: { $toObjectId: "$createdBy" },
+          comments: { $slice: [ "$comments", 3 ] },
+          totalComments: { $size: "$comments" } } },
         {
           $lookup: {
             from: "Users",
@@ -72,6 +76,7 @@ export default class Posts {
           $project: {
             postsId: 0,
             userDetails: 0,
+
           },
         },
         { $skip: Number(offset) },

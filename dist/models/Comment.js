@@ -50,7 +50,7 @@ class Comment {
         return commentData;
     }
 }
-Comment.getComments = (postId) => {
+Comment.getComments = (postId, skip) => {
     const db = database_1.getDb();
     const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(postId);
     return db.collection("posts").aggregate([
@@ -58,7 +58,7 @@ Comment.getComments = (postId) => {
         {
             $project: {
                 _id: 0,
-                comments: { $slice: ["$comments", 3, { $size: "$comments" }] },
+                comments: 1,
             },
         },
     ]).toArray();
