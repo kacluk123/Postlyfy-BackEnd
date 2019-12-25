@@ -14,8 +14,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const Post_1 = __importDefault(require("../models/Post"));
 const Comment_1 = __importDefault(require("../models/Comment"));
+const socket_1 = require("../util/socket");
 exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
+    const tag = req.params.tag;
     if (!errors.isEmpty()) {
         res.status(422).json(errors.array());
     }
@@ -24,7 +26,13 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         const post = new Post_1.default(requestData);
         try {
             const createdPost = yield post.savePostToDb();
+            const getTotalNumberOfPostsInTag = yield Post_1.default.countPosts(tag);
             res.status(200).json(createdPost.ops[0]);
+            socket_1.getIo().emit('posts', {
+                action: 'create',
+                getTotalNumberOfPostsInTag,
+                serverTag: tag,
+            });
         }
         catch (err) {
             console.log(err);

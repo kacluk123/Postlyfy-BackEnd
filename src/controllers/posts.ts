@@ -4,8 +4,12 @@ import Comment from "../models/Comment";
 import { Request, Response, RequestHandler } from "express";
 import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
+import { ioConnect } from '../app'; 
 interface createPostRequest extends Request {
   userId: string;
+  params: {
+    tag: string;
+  };
 }
 
 export const createPost: RequestHandler = async (
@@ -13,6 +17,7 @@ export const createPost: RequestHandler = async (
   res: Response
 ) => {
   const errors = validationResult(req);
+  const tag = req.params.tag;
 
   if (!errors.isEmpty()) {
     res.status(422).json(errors.array());
@@ -22,7 +27,14 @@ export const createPost: RequestHandler = async (
 
     try {
       const createdPost = await post.savePostToDb();
+      const getTotalNumberOfPostsInTag = await Posts.countPosts(tag);
+      
       res.status(200).json(createdPost.ops[0]);
+      getIo().emit('posts', {
+        action: 'create',
+        getTotalNumberOfPostsInTag,
+        serverTag: tag,
+      });
     } catch (err) {
       console.log(err);
     }

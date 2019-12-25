@@ -16,7 +16,7 @@ const posts_1 = require("../validation/posts");
 const comment_1 = require("../validation/comment");
 const is_auth_1 = __importDefault(require("../middleware/is-auth"));
 const router = express_1.default.Router();
-router.post("/posts/add-post", posts_1.createPost, is_auth_1.default, controller.createPost);
+router.post("/posts/add-post/:tag", posts_1.createPost, is_auth_1.default, controller.createPost);
 router.get("/posts/get-posts/:tag", controller.getPosts);
 router.patch("/posts/add-comment/:postId", comment_1.createComment, is_auth_1.default, controller.addComment);
 router.get("/posts/comments/:postId", controller.getComments);

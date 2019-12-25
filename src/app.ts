@@ -31,16 +31,20 @@ app.use(signupRoutes);
 app.use(postRoutes);
 app.use(tagsRoutes);
 app.use(userRoutes);
-
+const server = app.listen(port);
 const dbConnect = (client: mongodb.MongoClient) => {
-  const server = app.listen(port);
-
+  console.log(server)
   const io = init(server);
   io.on("connection", (socket: socketIo.Socket) => {
     console.log("Client connected");
+    
   });
 };
 
 mongoConnect({
   cb: dbConnect,
 });
+
+export function ioConnect() {
+  return init(server);
+}

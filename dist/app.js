@@ -27,8 +27,9 @@ app.use(auth_1.default);
 app.use(posts_1.default);
 app.use(tags_1.default);
 app.use(user_1.default);
+const server = app.listen(port);
 const dbConnect = (client) => {
-    const server = app.listen(port);
+    console.log(server);
     const io = socket_1.init(server);
     io.on("connection", (socket) => {
         console.log("Client connected");
@@ -37,4 +38,8 @@ const dbConnect = (client) => {
 database_1.default({
     cb: dbConnect,
 });
+function ioConnect() {
+    return socket_1.init(server);
+}
+exports.ioConnect = ioConnect;
 //# sourceMappingURL=app.js.map
