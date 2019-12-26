@@ -16,5 +16,6 @@ const auth_1 = require("../validation/auth");
 const router = express_1.default.Router();
 router.post('/signup', auth_1.createUser, controller.signup);
 router.post('/login', auth_1.loginUser, controller.login);
+router.get('/logout', controller.logout);
 exports.default = router;
 //# sourceMappingURL=auth.js.map

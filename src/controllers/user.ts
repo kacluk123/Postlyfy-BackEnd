@@ -10,7 +10,7 @@ interface IGetUserRequest extends Request {
   userId: string;
 }
 
-export const getUserDara: RequestHandler = async (
+export const getUserData: RequestHandler = async (
   req: IGetUserRequest,
   res: Response,
 ) => {
@@ -22,7 +22,8 @@ export const getUserDara: RequestHandler = async (
     const userId = req.userId;
 
     try {
-      const userData = await User.getUserById(userId);
+      const [userData] = await User.getUserById(userId);
+      
       res.status(200).json({
         isError: false,
         user: userData,

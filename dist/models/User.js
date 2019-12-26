@@ -19,14 +19,21 @@ class User {
         return __awaiter(this, void 0, void 0, function* () {
             const userIdConvertedToMongoID = new mongodb_1.default.ObjectId(userId);
             const db = database_1.getDb();
-            const searchedUser = yield db.collection("Users").findOne({ _id: userIdConvertedToMongoID });
-            return searchedUser;
+            return db.collection("Users").aggregate([
+                { $match: { _id: userIdConvertedToMongoID } },
+                {
+                    $project: {
+                        password: 0,
+                    },
+                },
+            ]).toArray();
         });
     }
     constructor({ name, email, password }) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.userPicture = null;
     }
     addUserToDb() {
         return __awaiter(this, void 0, void 0, function* () {

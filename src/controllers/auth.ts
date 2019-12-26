@@ -71,6 +71,16 @@ export const login: RequestHandler = async (
   );
 
   res
-    .cookie("token", token, { httpOnly: false, secure: false })
+    .cookie("token", token, { httpOnly: true, secure: false })
     .sendStatus(200);
+};
+
+export const logout = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.log('elo')
+  res.clearCookie("token")
+  .sendStatus(200);
 };

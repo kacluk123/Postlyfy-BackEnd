@@ -1,8 +1,10 @@
-let io;
-import socketIo from 'socket.io';
+import socketIo from 'socket.io'
+
+
+let io: socketIo.Socket;
 
 export const init = httpServer => {
-    io = socketIo(httpServer);
+    io = require('socket.io')(httpServer);
     return io;
 }
 

@@ -52,6 +52,7 @@ export default class Posts {
                 else: "$createdBy",
               },
             },
+            userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
           },
         },
         // { $unwind: "$comments" },

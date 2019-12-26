@@ -14,6 +14,6 @@ const express_1 = __importDefault(require("express"));
 const controller = __importStar(require("../controllers/user"));
 const is_auth_1 = __importDefault(require("../middleware/is-auth"));
 const router = express_1.default.Router();
-router.get("/users/get-user-data", is_auth_1.default, controller.getUserDara);
+router.get("/users/get-user-data", is_auth_1.default, controller.getUserData);
 exports.default = router;
 //# sourceMappingURL=user.js.map

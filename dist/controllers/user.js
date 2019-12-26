@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const User_1 = __importDefault(require("../models/User"));
-exports.getUserDara = (req, res) => __awaiter(this, void 0, void 0, function* () {
+exports.getUserData = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
     if (!errors.isEmpty()) {
         res.status(422).json(errors.array());
@@ -21,7 +21,7 @@ exports.getUserDara = (req, res) => __awaiter(this, void 0, void 0, function* ()
     else {
         const userId = req.userId;
         try {
-            const userData = yield User_1.default.getUserById(userId);
+            const [userData] = yield User_1.default.getUserById(userId);
             res.status(200).json({
                 isError: false,
                 user: userData,

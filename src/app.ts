@@ -9,7 +9,7 @@ import mongodb from "mongodb";
 import socketIo from "socket.io";
 import { init } from "./util/socket";
 import cookieParser from "cookie-parser";
-
+export let mySocket: socketIo.Socket;
 const app = express();
 const port = 3000;
 app.use((req, res, next) => {
@@ -33,11 +33,10 @@ app.use(tagsRoutes);
 app.use(userRoutes);
 const server = app.listen(port);
 const dbConnect = (client: mongodb.MongoClient) => {
-  console.log(server)
   const io = init(server);
   io.on("connection", (socket: socketIo.Socket) => {
-    console.log("Client connected");
-    
+    console.log('Client connected')
+    mySocket = socket;
   });
 };
 
@@ -45,6 +44,6 @@ mongoConnect({
   cb: dbConnect,
 });
 
-export function ioConnect() {
-  return init(server);
-}
+// export function getSocket() {
+//   return mySocket;
+// }

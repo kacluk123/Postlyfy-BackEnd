@@ -4,7 +4,8 @@ import Comment from "../models/Comment";
 import { Request, Response, RequestHandler } from "express";
 import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
-import { ioConnect } from '../app'; 
+import { mySocket } from '../app'; 
+import socketIo from 'socket.io';
 interface createPostRequest extends Request {
   userId: string;
   params: {
@@ -30,11 +31,27 @@ export const createPost: RequestHandler = async (
       const getTotalNumberOfPostsInTag = await Posts.countPosts(tag);
       
       res.status(200).json(createdPost.ops[0]);
-      getIo().emit('posts', {
+      // getIo().broadcast.emit('posts', {
+      //   action: 'create',
+      //   getTotalNumberOfPostsInTag,
+      //   serverTag: tag,
+      // });
+      mySocket.broadcast.emit('posts', {
         action: 'create',
         getTotalNumberOfPostsInTag,
         serverTag: tag,
       });
+
+      // getIo().on('connection', (socket: socketIo.Socket) => {
+      //   console.log(socket)
+      //   socket.on('send-post', (data) => {
+      //     socket.broadcast.emit('msg', {
+      //       action: 'create',
+      //       getTotalNumberOfPostsInTag,
+      //       serverTag: tag,
+      //     });
+      //   })
+      // });
     } catch (err) {
       console.log(err);
     }

@@ -63,7 +63,12 @@ exports.login = (req, res, next) => __awaiter(this, void 0, void 0, function* ()
         userName: searchedUser.name,
     }, jwt_secret_key_1.default, { expiresIn: "24h" });
     res
-        .cookie("token", token, { httpOnly: false, secure: false })
+        .cookie("token", token, { httpOnly: true, secure: false })
         .sendStatus(200);
 });
+exports.logout = (req, res, next) => {
+    console.log('elo');
+    res.clearCookie("token")
+        .sendStatus(200);
+};
 //# sourceMappingURL=auth.js.map

@@ -1,12 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 let io;
-const socket_io_1 = __importDefault(require("socket.io"));
 exports.init = httpServer => {
-    io = socket_io_1.default(httpServer);
+    io = require('socket.io')(httpServer);
     return io;
 };
 exports.getIo = () => {
