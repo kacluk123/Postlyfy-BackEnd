@@ -80,7 +80,6 @@ export const logout = (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log('elo')
   res.clearCookie("token")
   .sendStatus(200);
 };

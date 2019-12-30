@@ -67,7 +67,6 @@ exports.login = (req, res, next) => __awaiter(this, void 0, void 0, function* ()
         .sendStatus(200);
 });
 exports.logout = (req, res, next) => {
-    console.log('elo');
     res.clearCookie("token")
         .sendStatus(200);
 };

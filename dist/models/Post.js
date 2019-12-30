@@ -1,13 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../util/database");
+const mongodb_1 = __importDefault(require("mongodb"));
 // addedAt: "$addedAt",
 // postContent: "$postContent",
 // tags: "$tags"
 class Posts {
     static getPosts({ limit, offset, tag }) {
         const db = database_1.getDb();
-        console.log(limit, offset, tag);
         return db
             .collection("posts")
             .aggregate([
@@ -36,6 +39,7 @@ class Posts {
                             else: "$createdBy",
                         },
                     },
+                    likes: { $size: "$likes" },
                     userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
                 },
             },
@@ -68,6 +72,13 @@ class Posts {
         ])
             .toArray();
     }
+    static togglePostLike(userId, postId) {
+        const db = database_1.getDb();
+        const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(postId);
+        db.collection("posts").aggregate([{ $match: { _id: convertedToMongoObjectIdPostId, likes: userId } }], (err, result) => {
+            console.log(result);
+        });
+    }
     static countPosts(tag) {
         const db = database_1.getDb();
         return db
@@ -90,7 +101,8 @@ class Posts {
             postContent: this.post,
             tags: this.removeHashTags(this.tags),
             addedAt: new Date(),
-            comments: []
+            likes: [],
+            comments: [],
         };
     }
     removeHashTags(arratToRemoveFirstLetter) {

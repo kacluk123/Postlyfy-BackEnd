@@ -101,6 +101,29 @@ export const getPosts: RequestHandler = async (
   }
 };
 
+interface ITogglePostLikeRequest extends Request {
+  userId: string;
+  params: {
+    postId: string;
+  };
+}
+
+export const togglePostLike = async (
+  req: ITogglePostLikeRequest,
+  res: Response,
+) => {
+    const userId = req.userId;
+    const postId = req.params.postId;
+
+    try {
+      await Posts.togglePostLike(userId, postId);
+  
+      res.status(200);
+    } catch (err) {
+      console.log(err);
+    }
+};
+
 interface ICommentRequest extends createPostRequest {
   params: {
     postId: string;

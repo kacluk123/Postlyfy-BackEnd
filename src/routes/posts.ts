@@ -15,4 +15,5 @@ router.patch(
   controller.addComment,
 );
 router.get("/posts/comments/:postId", controller.getComments);
+router.post("/posts/toggleLike/:postId", isAuth, controller.togglePostLike);
 export default router;

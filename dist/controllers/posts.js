@@ -80,6 +80,17 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
         console.log(err);
     }
 });
+exports.togglePostLike = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    const userId = req.userId;
+    const postId = req.params.postId;
+    try {
+        yield Post_1.default.togglePostLike(userId, postId);
+        res.status(200);
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
 exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
     if (!errors.isEmpty()) {

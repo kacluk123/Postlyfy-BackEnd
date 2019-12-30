@@ -9,6 +9,7 @@ type postList = Array<{
   addedAt: string;
   tags: string;
   comments: [];
+  likes: number;
 }>;
 // addedAt: "$addedAt",
 // postContent: "$postContent",
@@ -24,7 +25,6 @@ export default class Posts {
     tag: string;
   }): Promise<postList> {
     const db = getDb();
-    console.log(limit, offset, tag);
     return db
       .collection("posts")
       .aggregate([
@@ -52,6 +52,7 @@ export default class Posts {
                 else: "$createdBy",
               },
             },
+            likes: {$size: "$likes"},
             userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
           },
         },
@@ -77,13 +78,24 @@ export default class Posts {
           $project: {
             postsId: 0,
             userDetails: 0,
-
           },
         },
         { $skip: Number(offset) },
         { $limit: Number(limit) },
       ])
       .toArray();
+  }
+
+  public static togglePostLike(userId: string, postId: string) {
+    const db = getDb();
+    const convertedToMongoObjectIdPostId = new mongodb.ObjectId(postId);
+  
+    db.collection("posts").aggregate(
+      [{$match: {  _id: convertedToMongoObjectIdPostId, likes: userId}}],
+      (err, result) => {
+        console.log(result)
+      },
+    );
   }
 
   public static countPosts(tag: string): Promise<number> {
@@ -117,7 +129,8 @@ export default class Posts {
       postContent: this.post,
       tags: this.removeHashTags(this.tags),
       addedAt: new Date(),
-      comments: []
+      likes: [],
+      comments: [],
     };
   }
 
