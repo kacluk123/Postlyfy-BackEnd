@@ -9,7 +9,8 @@ type postList = Array<{
   addedAt: string;
   tags: string;
   comments: [];
-  likes: number;
+  likes: [];
+  likesCount: number
 }>;
 // addedAt: "$addedAt",
 // postContent: "$postContent",
@@ -86,14 +87,24 @@ export default class Posts {
       .toArray();
   }
 
-  public static togglePostLike(userId: string, postId: string) {
+  public static async togglePostLike(userId: string, postId: string) {
     const db = getDb();
     const convertedToMongoObjectIdPostId = new mongodb.ObjectId(postId);
   
-    db.collection("posts").aggregate(
-      [{$match: {  _id: convertedToMongoObjectIdPostId, likes: userId}}],
+    await db.collection("posts").findOne(
+      { _id: convertedToMongoObjectIdPostId, likes: userId},
       (err, result) => {
-        console.log(result)
+        if (!result) {
+          db.collection("posts").updateOne(
+            { _id: convertedToMongoObjectIdPostId },
+            { $push: {likes: userId}, $inc: { likesCount: 1 }},
+          );
+        } else {
+          db.collection("posts").updateOne(
+            { _id: convertedToMongoObjectIdPostId },
+            { $pull: {likes: userId}, $inc: { likesCount: -1 }},
+          );
+        }
       },
     );
   }
@@ -130,6 +141,7 @@ export default class Posts {
       tags: this.removeHashTags(this.tags),
       addedAt: new Date(),
       likes: [],
+      likesCount: 0,
       comments: [],
     };
   }

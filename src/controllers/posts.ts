@@ -114,7 +114,7 @@ export const togglePostLike = async (
 ) => {
     const userId = req.userId;
     const postId = req.params.postId;
-
+    
     try {
       await Posts.togglePostLike(userId, postId);
   

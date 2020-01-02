@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -73,10 +81,17 @@ class Posts {
             .toArray();
     }
     static togglePostLike(userId, postId) {
-        const db = database_1.getDb();
-        const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(postId);
-        db.collection("posts").aggregate([{ $match: { _id: convertedToMongoObjectIdPostId, likes: userId } }], (err, result) => {
-            console.log(result);
+        return __awaiter(this, void 0, void 0, function* () {
+            const db = database_1.getDb();
+            const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(postId);
+            yield db.collection("posts").findOne({ _id: convertedToMongoObjectIdPostId, likes: userId }, (err, result) => {
+                if (!result) {
+                    db.collection("posts").updateOne({ _id: convertedToMongoObjectIdPostId }, { $push: { likes: userId }, $inc: { likesCount: 1 } });
+                }
+                else {
+                    db.collection("posts").updateOne({ _id: convertedToMongoObjectIdPostId }, { $pull: { likes: userId }, $inc: { likesCount: -1 } });
+                }
+            });
         });
     }
     static countPosts(tag) {
@@ -102,6 +117,7 @@ class Posts {
             tags: this.removeHashTags(this.tags),
             addedAt: new Date(),
             likes: [],
+            likesCount: 0,
             comments: [],
         };
     }

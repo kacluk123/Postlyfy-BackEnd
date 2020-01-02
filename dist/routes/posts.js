@@ -19,7 +19,7 @@ const router = express_1.default.Router();
 router.post("/posts/add-post/:tag", posts_1.createPost, is_auth_1.default, controller.createPost);
 router.get("/posts/get-posts/:tag", controller.getPosts);
 router.patch("/posts/add-comment/:postId", comment_1.createComment, is_auth_1.default, controller.addComment);
+router.post("/posts/toggle-like/:postId", is_auth_1.default, controller.togglePostLike);
 router.get("/posts/comments/:postId", controller.getComments);
-router.post("/posts/toggleLike/:postId", is_auth_1.default, controller.togglePostLike);
 exports.default = router;
 //# sourceMappingURL=posts.js.map

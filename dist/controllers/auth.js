@@ -29,7 +29,7 @@ exports.signup = (req, res) => __awaiter(this, void 0, void 0, function* () {
             yield user.addUserToDb();
             res.status(201).json({
                 messages: [{ msg: "User has been created!" }],
-                isError: false
+                isError: false,
             });
         }
         catch (err) {

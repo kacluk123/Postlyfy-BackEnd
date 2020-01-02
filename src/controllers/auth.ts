@@ -19,7 +19,7 @@ export const signup: RequestHandler = async (req: Request, res: Response) => {
       await user.addUserToDb();
       res.status(201).json({
         messages: [{ msg: "User has been created!" }],
-        isError: false
+        isError: false,
       });
     } catch (err) {
       console.log(err);
