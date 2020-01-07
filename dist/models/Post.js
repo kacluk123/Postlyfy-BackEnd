@@ -47,7 +47,6 @@ class Posts {
                             else: "$createdBy",
                         },
                     },
-                    likes: { $size: "$likes" },
                     userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
                 },
             },
@@ -94,6 +93,20 @@ class Posts {
             });
         });
     }
+    static deletePost(userId, postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const db = database_1.getDb();
+            const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(postId);
+            yield db.collection("posts").findOne({ _id: convertedToMongoObjectIdPostId }, (err, result) => {
+                if (result.createdBy === userId) {
+                    db.collection("posts").deleteOne({ _id: convertedToMongoObjectIdPostId });
+                }
+                else {
+                    console.log('elo');
+                }
+            });
+        });
+    }
     static countPosts(tag) {
         const db = database_1.getDb();
         return db
@@ -108,10 +121,7 @@ class Posts {
     }
     savePostToDb() {
         const db = database_1.getDb();
-        return db.collection("posts").insertOne(this.postToSaveToDb());
-    }
-    postToSaveToDb() {
-        return {
+        return db.collection("posts").insertOne({
             createdBy: this.userId,
             postContent: this.post,
             tags: this.removeHashTags(this.tags),
@@ -119,7 +129,7 @@ class Posts {
             likes: [],
             likesCount: 0,
             comments: [],
-        };
+        });
     }
     removeHashTags(arratToRemoveFirstLetter) {
         return arratToRemoveFirstLetter.map((word) => word.substr(1));

@@ -20,6 +20,7 @@ router.post("/posts/add-post/:tag", posts_1.createPost, is_auth_1.default, contr
 router.get("/posts/get-posts/:tag", controller.getPosts);
 router.patch("/posts/add-comment/:postId", comment_1.createComment, is_auth_1.default, controller.addComment);
 router.post("/posts/toggle-like/:postId", is_auth_1.default, controller.togglePostLike);
+router.delete("/posts/delete-post/:postId", is_auth_1.default, controller.deletePost);
 router.get("/posts/comments/:postId", controller.getComments);
 exports.default = router;
 //# sourceMappingURL=posts.js.map

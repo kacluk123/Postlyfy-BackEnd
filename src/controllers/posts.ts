@@ -6,7 +6,7 @@ import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
 import { mySocket } from '../app'; 
 import socketIo from 'socket.io';
-interface createPostRequest extends Request {
+interface ICreatePostRequest extends Request {
   userId: string;
   params: {
     tag: string;
@@ -14,8 +14,8 @@ interface createPostRequest extends Request {
 }
 
 export const createPost: RequestHandler = async (
-  req: createPostRequest,
-  res: Response
+  req: ICreatePostRequest,
+  res: Response,
 ) => {
   const errors = validationResult(req);
   const tag = req.params.tag;
@@ -31,27 +31,44 @@ export const createPost: RequestHandler = async (
       const getTotalNumberOfPostsInTag = await Posts.countPosts(tag);
       
       res.status(200).json(createdPost.ops[0]);
-      // getIo().broadcast.emit('posts', {
-      //   action: 'create',
-      //   getTotalNumberOfPostsInTag,
-      //   serverTag: tag,
-      // });
+
       mySocket.broadcast.emit('posts', {
         action: 'create',
         getTotalNumberOfPostsInTag,
         serverTag: tag,
       });
 
-      // getIo().on('connection', (socket: socketIo.Socket) => {
-      //   console.log(socket)
-      //   socket.on('send-post', (data) => {
-      //     socket.broadcast.emit('msg', {
-      //       action: 'create',
-      //       getTotalNumberOfPostsInTag,
-      //       serverTag: tag,
-      //     });
-      //   })
-      // });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+interface IDeletePostRequest extends Request {
+  userId: string;
+  params: {
+    postId: string;
+  };
+}
+
+export const deletePost: RequestHandler = async (
+  req: IDeletePostRequest,
+  res: Response,
+) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(422).json(errors.array());
+  } else {
+    const userId = req.userId;
+    const postId = req.params.postId;
+
+    try {
+      await Posts.deletePost(userId, postId);
+      
+      res.status(200).json({
+        isError: false;
+      });
     } catch (err) {
       console.log(err);
     }
@@ -124,7 +141,7 @@ export const togglePostLike = async (
     }
 };
 
-interface ICommentRequest extends createPostRequest {
+interface ICommentRequest extends ICreatePostRequest {
   params: {
     postId: string;
   };

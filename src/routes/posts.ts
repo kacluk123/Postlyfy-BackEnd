@@ -15,5 +15,6 @@ router.patch(
   controller.addComment,
 );
 router.post("/posts/toggle-like/:postId", isAuth, controller.togglePostLike);
+router.delete("/posts/delete-post/:postId", isAuth, controller.deletePost);
 router.get("/posts/comments/:postId", controller.getComments);
 export default router;

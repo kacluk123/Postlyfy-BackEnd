@@ -53,7 +53,6 @@ export default class Posts {
                 else: "$createdBy",
               },
             },
-            likes: {$size: "$likes"},
             userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
           },
         },
@@ -109,6 +108,22 @@ export default class Posts {
     );
   }
 
+  public static async deletePost(userId: string, postId: string) {
+    const db = getDb();
+    const convertedToMongoObjectIdPostId = new mongodb.ObjectId(postId);
+  
+    await db.collection("posts").findOne(
+      { _id: convertedToMongoObjectIdPostId},
+      (err, result) => {
+        if (result.createdBy === userId) {
+          db.collection("posts").deleteOne( { _id: convertedToMongoObjectIdPostId });
+        } else {
+          console.log('elo')
+        }
+      },
+    );
+  }
+
   public static countPosts(tag: string): Promise<number> {
     const db = getDb();
 
@@ -131,11 +146,7 @@ export default class Posts {
   public savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
     const db = getDb();
 
-    return db.collection("posts").insertOne(this.postToSaveToDb());
-  }
-
-  public postToSaveToDb() {
-    return {
+    return db.collection("posts").insertOne({
       createdBy: this.userId,
       postContent: this.post,
       tags: this.removeHashTags(this.tags),
@@ -143,7 +154,7 @@ export default class Posts {
       likes: [],
       likesCount: 0,
       comments: [],
-    };
+    });
   }
 
   private removeHashTags(arratToRemoveFirstLetter: string[]): string[] {

@@ -28,26 +28,30 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
             const createdPost = yield post.savePostToDb();
             const getTotalNumberOfPostsInTag = yield Post_1.default.countPosts(tag);
             res.status(200).json(createdPost.ops[0]);
-            // getIo().broadcast.emit('posts', {
-            //   action: 'create',
-            //   getTotalNumberOfPostsInTag,
-            //   serverTag: tag,
-            // });
             app_1.mySocket.broadcast.emit('posts', {
                 action: 'create',
                 getTotalNumberOfPostsInTag,
                 serverTag: tag,
             });
-            // getIo().on('connection', (socket: socketIo.Socket) => {
-            //   console.log(socket)
-            //   socket.on('send-post', (data) => {
-            //     socket.broadcast.emit('msg', {
-            //       action: 'create',
-            //       getTotalNumberOfPostsInTag,
-            //       serverTag: tag,
-            //     });
-            //   })
-            // });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+});
+exports.deletePost = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    const errors = express_validator_1.validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json(errors.array());
+    }
+    else {
+        const userId = req.userId;
+        const postId = req.params.postId;
+        try {
+            yield Post_1.default.deletePost(userId, postId);
+            res.status(200).json({
+                isError: false
+            });
         }
         catch (err) {
             console.log(err);
