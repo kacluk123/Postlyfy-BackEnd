@@ -102,7 +102,7 @@ class Posts {
                     db.collection("posts").deleteOne({ _id: convertedToMongoObjectIdPostId });
                 }
                 else {
-                    console.log('elo');
+                    console.log('error');
                 }
             });
         });
