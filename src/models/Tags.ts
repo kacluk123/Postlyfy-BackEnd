@@ -1,5 +1,4 @@
 import { getDb } from "../util/database";
-import moment from 'moment';
 
 interface ITags {
   _id: string;

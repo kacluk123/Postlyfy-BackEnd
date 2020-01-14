@@ -5,6 +5,7 @@ import { Request, Response, RequestHandler } from "express";
 import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
 import { mySocket } from '../app'; 
+import { ISortConstructorParams, Sorting } from '../helpers/createSort'
 import socketIo from 'socket.io';
 interface ICreatePostRequest extends Request {
   userId: string;
@@ -79,6 +80,7 @@ interface IGetPostsRequest extends Request {
   query: {
     offset: string;
     limit: string;
+    sorting: ISortConstructorParams;
   };
   params: {
     tag: string;
@@ -94,13 +96,15 @@ export const getPosts: RequestHandler = async (
 
   const offset = req.query.offset;
   const limit = req.query.limit;
+  const sorting = new Sorting(JSON.parse(req.query.sorting));
   const tag = req.params.tag;
-
+  // console.log(sorting.allSorting)
   try {
     const postsList = await getPosts({
       limit,
       offset,
       tag,
+      sorting
     });
 
     const postsTotalNumber = await getTotalPostNumber(tag);

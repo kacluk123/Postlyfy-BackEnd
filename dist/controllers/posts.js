@@ -15,6 +15,7 @@ const express_validator_1 = require("express-validator");
 const Post_1 = __importDefault(require("../models/Post"));
 const Comment_1 = __importDefault(require("../models/Comment"));
 const app_1 = require("../app");
+const createSort_1 = require("../helpers/createSort");
 exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const errors = express_validator_1.validationResult(req);
     const tag = req.params.tag;
@@ -63,12 +64,15 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const getTotalPostNumber = Post_1.default.countPosts;
     const offset = req.query.offset;
     const limit = req.query.limit;
+    const sorting = new createSort_1.Sorting(JSON.parse(req.query.sorting));
     const tag = req.params.tag;
+    // console.log(sorting.allSorting)
     try {
         const postsList = yield getPosts({
             limit,
             offset,
             tag,
+            sorting
         });
         const postsTotalNumber = yield getTotalPostNumber(tag);
         const response = {

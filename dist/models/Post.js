@@ -17,13 +17,14 @@ const mongodb_1 = __importDefault(require("mongodb"));
 // postContent: "$postContent",
 // tags: "$tags"
 class Posts {
-    static getPosts({ limit, offset, tag }) {
+    static getPosts({ limit, offset, tag, sorting, }) {
         const db = database_1.getDb();
         return db
             .collection("posts")
             .aggregate([
-            { $sort: { addedAt: -1 } },
-            { $match: { tags: tag } },
+            ...sorting.allSorting
+            // { $addFields: { comments: { $reverseArray: "$comments" } }},
+            ,
             // { $addFields: { comments: { $reverseArray: "$comments" } }},
             { $addFields: {
                     postsId: { $toObjectId: "$createdBy" },

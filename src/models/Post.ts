@@ -1,6 +1,7 @@
 import { getDb } from "../util/database";
 import mongodb from "mongodb";
 import { string } from "prop-types";
+import { Sorting } from '../helpers/createSort' 
 
 type postList = Array<{
   _id: string;
@@ -19,18 +20,19 @@ export default class Posts {
   public static getPosts({
     limit,
     offset,
-    tag
+    tag,
+    sorting,
   }: {
     limit: string;
     offset: string;
     tag: string;
+    sorting: Sorting;
   }): Promise<postList> {
     const db = getDb();
     return db
       .collection("posts")
       .aggregate([
-        { $sort: { addedAt : -1 }},
-        { $match: { tags: tag } },
+        ...sorting.allSorting
         // { $addFields: { comments: { $reverseArray: "$comments" } }},
         { $addFields: {
           postsId: { $toObjectId: "$createdBy" },
