@@ -1,5 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const checkSortIsDescending = (prev, curr) => {
+    let sortValue = curr;
+    const isDescending = curr.startsWith("-");
+    if (isDescending) {
+        sortValue = sortValue.substring(1);
+    }
+    return Object.assign({}, prev, { [sortValue]: isDescending ? -1 : 1 });
+};
+const convertSortArrayToMongoSort = (sortArray) => (sortArray.reduce(checkSortIsDescending, {}));
 class Sorting {
     constructor(sorting) {
         this._sort = sorting.sort ? sorting.sort : null;
@@ -7,15 +16,8 @@ class Sorting {
     }
     get sort() {
         if (this._sort) {
-            let sortValue = this._sort;
-            const isSortValueStartsWithMinus = this._sort.startsWith("-");
-            if (isSortValueStartsWithMinus) {
-                sortValue = sortValue.substring(1);
-            }
             return {
-                $sort: {
-                    [sortValue]: isSortValueStartsWithMinus ? -1 : 1,
-                },
+                $sort: convertSortArrayToMongoSort(this._sort),
             };
         }
         return null;

@@ -29,10 +29,11 @@ export default class Posts {
     sorting: Sorting;
   }): Promise<postList> {
     const db = getDb();
+    // console.log(sorting.all)
     return db
       .collection("posts")
       .aggregate([
-        ...sorting.allSorting
+        ...sorting.allSorting,
         // { $addFields: { comments: { $reverseArray: "$comments" } }},
         { $addFields: {
           postsId: { $toObjectId: "$createdBy" },

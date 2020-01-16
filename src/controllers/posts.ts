@@ -80,7 +80,7 @@ interface IGetPostsRequest extends Request {
   query: {
     offset: string;
     limit: string;
-    sorting: ISortConstructorParams;
+    sorting: string;
   };
   params: {
     tag: string;

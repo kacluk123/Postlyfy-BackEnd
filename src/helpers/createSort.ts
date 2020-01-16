@@ -1,15 +1,43 @@
-export interface ISortConstructorParams {
-  sort?: string;
-  match?: {
-    [k: string]: string;
+
+type logicalSortingOperator = "$gt";
+
+interface ISingleMatch {
+  [k: string]: string | {
+    [k in logicalSortingOperator]: string;
   };
 }
 
+type matchOperators = "$or" | "$and";
+
+type matchWithOperator = {
+  [k in matchOperators]: ISingleMatch[]
+};
+
+export interface ISortConstructorParams {
+  sort?: string[];
+  match?: matchWithOperator | ISingleMatch;
+}
+
+const checkSortIsDescending = (prev: {[k: string]: number}, curr: string) => {
+  let sortValue = curr;
+  const isDescending = curr.startsWith("-");
+  if (isDescending) {
+    sortValue = sortValue.substring(1);
+  }
+
+  return {
+    ...prev,
+    [sortValue]: isDescending ? -1 : 1,
+  };
+};
+
+const convertSortArrayToMongoSort = (sortArray: string[]): {[k: string]: number} => (
+  sortArray.reduce(checkSortIsDescending, {})
+);
+
 export class Sorting {
-  public _sort: string | null;
-  public _match: {
-    [k: string]: string;
-  } | null;
+  public _sort: string[] | null;
+  public _match: matchWithOperator | ISingleMatch | null;
 
   constructor(sorting: ISortConstructorParams) {
     this._sort = sorting.sort ? sorting.sort : null;
@@ -18,15 +46,8 @@ export class Sorting {
 
   get sort() {
     if (this._sort) {
-      let sortValue = this._sort;
-      const isSortValueStartsWithMinus = this._sort.startsWith("-");
-      if (isSortValueStartsWithMinus) {
-        sortValue = sortValue.substring(1);
-      }
       return {
-        $sort: {
-          [sortValue]: isSortValueStartsWithMinus ? -1 : 1,
-        },
+        $sort: convertSortArrayToMongoSort(this._sort),
       };
     }
 
