@@ -27,7 +27,8 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         const post = new Post_1.default(requestData);
         try {
             const createdPost = yield post.savePostToDb();
-            const getTotalNumberOfPostsInTag = yield Post_1.default.countPosts(tag);
+            const getTotalNumberOfPostsInTag = yield Post_1.default.countPosts({ tags: tag });
+            console.log(getTotalNumberOfPostsInTag);
             res.status(200).json(createdPost.ops[0]);
             app_1.mySocket.broadcast.emit('posts', {
                 action: 'create',
@@ -64,23 +65,21 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const getTotalPostNumber = Post_1.default.countPosts;
     const offset = req.query.offset;
     const limit = req.query.limit;
-    const sorting = new createSort_1.Sorting(JSON.parse(req.query.sorting));
-    const tag = req.params.tag;
-    // console.log(sorting.allSorting)
+    const filters = JSON.parse(req.query.sorting);
+    const sorting = new createSort_1.Sorting(filters);
     try {
         const postsList = yield getPosts({
             limit,
             offset,
-            tag,
-            sorting
+            sorting,
         });
-        const postsTotalNumber = yield getTotalPostNumber(tag);
+        const postsTotalNumber = yield getTotalPostNumber(sorting.match.$match);
         const response = {
             isError: false,
             posts: postsList,
             offset: Number(offset),
-            total: postsTotalNumber,
             limit: Number(limit),
+            total: postsTotalNumber,
         };
         res.status(200).json(response);
     }

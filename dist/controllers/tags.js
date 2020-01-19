@@ -15,7 +15,6 @@ const Tags_1 = __importDefault(require("../models/Tags"));
 exports.getTags = (req, res) => __awaiter(this, void 0, void 0, function* () {
     try {
         const date = req.query.date;
-        console.log(date);
         const tags = yield Tags_1.default.getAllTags(date);
         res.status(200).json({
             isError: false,

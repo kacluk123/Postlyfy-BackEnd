@@ -5,7 +5,7 @@ import { Request, Response, RequestHandler } from "express";
 import Tags from "../models/Tags";
 import { getIo } from "../util/socket";
 import { mySocket } from '../app'; 
-import { ISortConstructorParams, Sorting } from '../helpers/createSort'
+import { ISort, Sorting } from '../helpers/createSort'
 import socketIo from 'socket.io';
 interface ICreatePostRequest extends Request {
   userId: string;
@@ -29,8 +29,8 @@ export const createPost: RequestHandler = async (
 
     try {
       const createdPost = await post.savePostToDb();
-      const getTotalNumberOfPostsInTag = await Posts.countPosts(tag);
-      
+      const getTotalNumberOfPostsInTag = await Posts.countPosts({tags: tag});
+      console.log(getTotalNumberOfPostsInTag)
       res.status(200).json(createdPost.ops[0]);
 
       mySocket.broadcast.emit('posts', {
@@ -82,9 +82,6 @@ interface IGetPostsRequest extends Request {
     limit: string;
     sorting: string;
   };
-  params: {
-    tag: string;
-  };
 }
 
 export const getPosts: RequestHandler = async (
@@ -96,25 +93,23 @@ export const getPosts: RequestHandler = async (
 
   const offset = req.query.offset;
   const limit = req.query.limit;
-  const sorting = new Sorting(JSON.parse(req.query.sorting));
-  const tag = req.params.tag;
-  // console.log(sorting.allSorting)
+  const filters: ISort = JSON.parse(req.query.sorting);
+  const sorting = new Sorting(filters);
+
   try {
     const postsList = await getPosts({
       limit,
       offset,
-      tag,
-      sorting
+      sorting,
     });
-
-    const postsTotalNumber = await getTotalPostNumber(tag);
+    const postsTotalNumber = await getTotalPostNumber(sorting.match.$match);
 
     const response = {
       isError: false,
       posts: postsList,
       offset: Number(offset),
-      total: postsTotalNumber,
       limit: Number(limit),
+      total: postsTotalNumber,
     };
     res.status(200).json(response);
   } catch (err) {

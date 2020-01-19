@@ -1,7 +1,7 @@
 import { getDb } from "../util/database";
 import mongodb from "mongodb";
 import { string } from "prop-types";
-import { Sorting } from '../helpers/createSort' 
+import { Sorting, ISort } from '../helpers/createSort' 
 
 type postList = Array<{
   _id: string;
@@ -20,16 +20,13 @@ export default class Posts {
   public static getPosts({
     limit,
     offset,
-    tag,
     sorting,
   }: {
     limit: string;
     offset: string;
-    tag: string;
     sorting: Sorting;
   }): Promise<postList> {
     const db = getDb();
-    // console.log(sorting.all)
     return db
       .collection("posts")
       .aggregate([
@@ -38,7 +35,8 @@ export default class Posts {
         { $addFields: {
           postsId: { $toObjectId: "$createdBy" },
           comments: { $slice: [ "$comments", 3 ] },
-          totalComments: { $size: "$comments" } } },
+          totalComments: { $size: "$comments" } },
+        },
         {
           $lookup: {
             from: "Users",
@@ -127,12 +125,12 @@ export default class Posts {
     );
   }
 
-  public static countPosts(tag: string): Promise<number> {
+  public static countPosts(match: ISort["match"]): Promise<number> {
     const db = getDb();
-
+    console.log(match)
     return db
       .collection("posts")
-      .find({ tags: tag })
+      .find(match)
       .count();
   }
 

@@ -17,9 +17,8 @@ const mongodb_1 = __importDefault(require("mongodb"));
 // postContent: "$postContent",
 // tags: "$tags"
 class Posts {
-    static getPosts({ limit, offset, tag, sorting, }) {
+    static getPosts({ limit, offset, sorting, }) {
         const db = database_1.getDb();
-        // console.log(sorting.all)
         return db
             .collection("posts")
             .aggregate([
@@ -29,7 +28,8 @@ class Posts {
                     postsId: { $toObjectId: "$createdBy" },
                     comments: { $slice: ["$comments", 3] },
                     totalComments: { $size: "$comments" }
-                } },
+                },
+            },
             {
                 $lookup: {
                     from: "Users",
@@ -107,11 +107,12 @@ class Posts {
             });
         });
     }
-    static countPosts(tag) {
+    static countPosts(match) {
         const db = database_1.getDb();
+        console.log(match);
         return db
             .collection("posts")
-            .find({ tags: tag })
+            .find(match)
             .count();
     }
     constructor({ post, userId, tags }) {

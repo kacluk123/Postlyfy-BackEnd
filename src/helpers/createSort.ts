@@ -2,8 +2,10 @@
 type logicalSortingOperator = "$gt";
 
 interface ISingleMatch {
-  [k: string]: string | {
+  [k: string]: {
     [k in logicalSortingOperator]: string;
+  } | {
+    [k: string]: string;
   };
 }
 
@@ -13,7 +15,7 @@ type matchWithOperator = {
   [k in matchOperators]: ISingleMatch[]
 };
 
-export interface ISortConstructorParams {
+export interface ISort {
   sort?: string[];
   match?: matchWithOperator | ISingleMatch;
 }
@@ -39,7 +41,7 @@ export class Sorting {
   public _sort: string[] | null;
   public _match: matchWithOperator | ISingleMatch | null;
 
-  constructor(sorting: ISortConstructorParams) {
+  constructor(sorting: ISort) {
     this._sort = sorting.sort ? sorting.sort : null;
     this._match = sorting.match ? sorting.match : null;
   }
