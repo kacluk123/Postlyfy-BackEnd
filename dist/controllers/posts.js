@@ -28,7 +28,6 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         try {
             const createdPost = yield post.savePostToDb();
             const getTotalNumberOfPostsInTag = yield Post_1.default.countPosts({ tags: tag });
-            console.log(getTotalNumberOfPostsInTag);
             res.status(200).json(createdPost.ops[0]);
             app_1.mySocket.broadcast.emit('posts', {
                 action: 'create',

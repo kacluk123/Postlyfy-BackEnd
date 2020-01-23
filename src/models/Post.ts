@@ -127,7 +127,7 @@ export default class Posts {
 
   public static countPosts(match: ISort["match"]): Promise<number> {
     const db = getDb();
-    console.log(match)
+    
     return db
       .collection("posts")
       .find(match)

@@ -30,7 +30,6 @@ export const createPost: RequestHandler = async (
     try {
       const createdPost = await post.savePostToDb();
       const getTotalNumberOfPostsInTag = await Posts.countPosts({tags: tag});
-      console.log(getTotalNumberOfPostsInTag)
       res.status(200).json(createdPost.ops[0]);
 
       mySocket.broadcast.emit('posts', {

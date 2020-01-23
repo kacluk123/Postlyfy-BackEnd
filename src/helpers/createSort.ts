@@ -17,7 +17,11 @@ type matchWithOperator = {
 
 export interface ISort {
   sort?: string[];
-  match?: matchWithOperator | ISingleMatch;
+  match?: ISingleMatch[];
+}
+
+function isValidDate(date: Date) {
+  return date.getTime() === date.getTime();
 }
 
 const checkSortIsDescending = (prev: {[k: string]: number}, curr: string) => {
@@ -39,7 +43,7 @@ const convertSortArrayToMongoSort = (sortArray: string[]): {[k: string]: number}
 
 export class Sorting {
   public _sort: string[] | null;
-  public _match: matchWithOperator | ISingleMatch | null;
+  public _match: ISingleMatch[] | null;
 
   constructor(sorting: ISort) {
     this._sort = sorting.sort ? sorting.sort : null;
@@ -57,9 +61,32 @@ export class Sorting {
   }
 
   get match() {
-    if (this._match) {
+    const newMatch = this._match.map((match) => {
+      const [key, value] = Object.entries(match)[0];
+      if (typeof value === 'object') {
+        const [operatorObjectkey, operatorObjectvalue] = Object.entries(value)[0];
+
+        const date = new Date(operatorObjectvalue);
+
+        return {
+          [key]: {
+            [operatorObjectkey]: isValidDate(date) ? date : operatorObjectvalue;
+          }
+        };
+      }
+
+      return match;
+    });
+
+    console.log(newMatch)
+
+    const [matchFilter] = newMatch;
+
+    if (newMatch) {
       return {
-        $match: this._match,
+        $match: newMatch.length > 1
+          ? { $and: newMatch }
+          : matchFilter,
       };
     }
 

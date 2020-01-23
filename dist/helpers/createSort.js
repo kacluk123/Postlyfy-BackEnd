@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+function isValidDate(date) {
+    return date.getTime() === date.getTime();
+}
 const checkSortIsDescending = (prev, curr) => {
     let sortValue = curr;
     const isDescending = curr.startsWith("-");
@@ -23,9 +26,26 @@ class Sorting {
         return null;
     }
     get match() {
-        if (this._match) {
+        const newMatch = this._match.map((match) => {
+            const [key, value] = Object.entries(match)[0];
+            if (typeof value === 'object') {
+                const [operatorObjectkey, operatorObjectvalue] = Object.entries(value)[0];
+                const date = new Date(operatorObjectvalue);
+                return {
+                    [key]: {
+                        [operatorObjectkey]: isValidDate(date) ? date : operatorObjectvalue
+                    }
+                };
+            }
+            return match;
+        });
+        console.log(newMatch);
+        const [matchFilter] = newMatch;
+        if (newMatch) {
             return {
-                $match: this._match,
+                $match: newMatch.length > 1
+                    ? { $and: newMatch }
+                    : matchFilter,
             };
         }
         return null;

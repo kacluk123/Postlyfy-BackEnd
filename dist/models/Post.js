@@ -109,7 +109,6 @@ class Posts {
     }
     static countPosts(match) {
         const db = database_1.getDb();
-        console.log(match);
         return db
             .collection("posts")
             .find(match)
