@@ -38,8 +38,8 @@ export const createPost: RequestHandler = async (
         serverTag: tag,
       });
 
-    } catch (err) {
-      console.log(err);
+    } catch  {
+      res.status(500).json([{ msg: "Internal server error" }]);
     }
   }
 };
@@ -67,7 +67,7 @@ export const deletePost: RequestHandler = async (
       await Posts.deletePost(userId, postId);
       
       res.status(200).json({
-        isError: false;
+        isError: false,
       });
     } catch (err) {
       console.log(err);

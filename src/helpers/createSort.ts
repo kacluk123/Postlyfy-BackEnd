@@ -61,7 +61,7 @@ export class Sorting {
   }
 
   get match() {
-    const newMatch = this._match.map((match) => {
+    const newMatch = this._match.map((match: ISingleMatch) => {
       const [key, value] = Object.entries(match)[0];
       if (typeof value === 'object') {
         const [operatorObjectkey, operatorObjectvalue] = Object.entries(value)[0];
@@ -70,15 +70,13 @@ export class Sorting {
 
         return {
           [key]: {
-            [operatorObjectkey]: isValidDate(date) ? date : operatorObjectvalue;
+            [operatorObjectkey]: isValidDate(date) ? date : operatorObjectvalue,
           }
         };
       }
 
       return match;
     });
-
-    console.log(newMatch)
 
     const [matchFilter] = newMatch;
 

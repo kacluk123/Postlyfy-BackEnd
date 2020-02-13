@@ -22,7 +22,7 @@ export const signup: RequestHandler = async (req: Request, res: Response) => {
         isError: false,
       });
     } catch (err) {
-      console.log(err);
+      res.status(500).json([{ msg: "Internal server error" }]);
     }
   }
 };

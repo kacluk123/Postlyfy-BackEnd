@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = __importDefault(require("mongodb"));
 const MongoClient = mongodb_1.default.MongoClient;
-const databaseUrl = "mongodb+srv://sakuy:123@szkolna17-k7gpb.mongodb.net/szkolna17?retryWrites=true&w=majority";
+const databaseUrl = "mongodb+srv://TestUser:123@cluster0-ow3p8.mongodb.net/test?retryWrites=true&w=majority";
 let _db;
 const dbconnect = (dbUrl) => __awaiter(this, void 0, void 0, function* () { return yield MongoClient.connect(dbUrl); });
 const mongoConnect = ({ cb }) => __awaiter(this, void 0, void 0, function* () {
@@ -27,7 +27,7 @@ const mongoConnect = ({ cb }) => __awaiter(this, void 0, void 0, function* () {
 });
 exports.getDb = () => {
     if (_db) {
-        return _db.db("szkolna17-db");
+        return _db.db("test");
     }
     throw new Error("Database not found");
 };

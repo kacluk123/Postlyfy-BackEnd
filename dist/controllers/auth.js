@@ -33,7 +33,7 @@ exports.signup = (req, res) => __awaiter(this, void 0, void 0, function* () {
             });
         }
         catch (err) {
-            console.log(err);
+            res.status(500).json([{ msg: "Internal server error" }]);
         }
     }
 });

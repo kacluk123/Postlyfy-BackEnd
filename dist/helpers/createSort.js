@@ -33,13 +33,12 @@ class Sorting {
                 const date = new Date(operatorObjectvalue);
                 return {
                     [key]: {
-                        [operatorObjectkey]: isValidDate(date) ? date : operatorObjectvalue
+                        [operatorObjectkey]: isValidDate(date) ? date : operatorObjectvalue,
                     }
                 };
             }
             return match;
         });
-        console.log(newMatch);
         const [matchFilter] = newMatch;
         if (newMatch) {
             return {

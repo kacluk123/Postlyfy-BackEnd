@@ -93,7 +93,7 @@
       }
     ],
     "linebreak-style": [false, "LF"],
-    "typedef": [true, "parameter", "arrow-parameter", "property-declaration"],
+    "typedef": [true, "property-declaration"],
     "no-consecutive-blank-lines": true
   },
   "rulesDirectory": [],

@@ -35,8 +35,8 @@ exports.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () 
                 serverTag: tag,
             });
         }
-        catch (err) {
-            console.log(err);
+        catch (_a) {
+            res.status(500).json([{ msg: "Internal server error" }]);
         }
     }
 });
@@ -51,7 +51,7 @@ exports.deletePost = (req, res) => __awaiter(this, void 0, void 0, function* () 
         try {
             yield Post_1.default.deletePost(userId, postId);
             res.status(200).json({
-                isError: false
+                isError: false,
             });
         }
         catch (err) {

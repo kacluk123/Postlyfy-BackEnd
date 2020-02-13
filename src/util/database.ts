@@ -1,7 +1,7 @@
 import mongodb from "mongodb";
 
 const MongoClient = mongodb.MongoClient;
-const databaseUrl = "mongodb+srv://sakuy:123@szkolna17-k7gpb.mongodb.net/szkolna17?retryWrites=true&w=majority";
+const databaseUrl = "mongodb+srv://TestUser:123@cluster0-ow3p8.mongodb.net/test?retryWrites=true&w=majority";
 
 interface IMongoConnect {
     cb: (client: mongodb.MongoClient) => void;
@@ -22,10 +22,10 @@ const mongoConnect = async ({ cb }: IMongoConnect) => {
 
 export const getDb = () => {
   if (_db) {
-    return _db.db("szkolna17-db")
+    return _db.db("test");
   }
 
-  throw new Error("Database not found")
+  throw new Error("Database not found");
 };
 
 export default mongoConnect;

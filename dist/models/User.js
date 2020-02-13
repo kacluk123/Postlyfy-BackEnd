@@ -29,11 +29,11 @@ class User {
             ]).toArray();
         });
     }
-    constructor({ name, email, password }) {
+    constructor({ name, email, password, userPicture }) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.userPicture = null;
+        this.userPicture = userPicture || null;
     }
     addUserToDb() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -44,13 +44,8 @@ class User {
     }
     cryptPassword() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const cryptedPassword = yield bcrypt_1.default.hash(this.password, 12);
-                this.password = cryptedPassword;
-            }
-            catch (err) {
-                console.log(err);
-            }
+            const cryptedPassword = yield bcrypt_1.default.hash(this.password, 12);
+            this.password = cryptedPassword;
         });
     }
 }

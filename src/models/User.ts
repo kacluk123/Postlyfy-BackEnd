@@ -11,6 +11,11 @@ interface IUserData {
 }
 
 export default class User {
+  private name: string;
+  private email: string;
+  private password: string;
+  private userPicture: string | null;
+
   public static async getUserById(userId: string): Promise<Array<Omit<IUserData, "password">>> {
     const userIdConvertedToMongoID = new mongodb.ObjectId(userId);
     const db = getDb();
@@ -25,16 +30,11 @@ export default class User {
     ]).toArray();
   }
 
-  private name: string;
-  private email: string;
-  private password: string;
-  private userPicture: null;
-
-  constructor({ name, email, password }) {
+  constructor({ name, email, password, userPicture }) {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.userPicture = null;
+    this.userPicture = userPicture || null;
   }
 
   public async addUserToDb(): Promise<mongodb.InsertOneWriteOpResult> {
@@ -45,11 +45,7 @@ export default class User {
   }
 
   private async cryptPassword(): Promise<void> {
-    try {
-      const cryptedPassword: string = await bcrypt.hash(this.password, 12);
-      this.password = cryptedPassword;
-    } catch (err) {
-      console.log(err);
-    }
+    const cryptedPassword: string = await bcrypt.hash(this.password, 12);
+    this.password = cryptedPassword;
   }
 }
