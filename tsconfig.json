@@ -1,12 +1,60 @@
+// {
+//     "compilerOptions": {
+//         "outDir": "./dist/",
+//         "sourceMap": true,
+//         "noImplicitAny": false,
+//         "module": "commonjs",
+//         "target": "es5",
+//         "jsx": "react",
+//         "plugins": [{"name": "typescript-tslint-plugin"}]
+//     },
+//     "exclude": [
+//         "node_modules"
+//     ]
+// }
+
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "target": "es6",
-      "moduleResolution": "node",
-      "sourceMap": true,
-      "outDir": "dist"
-    },
-    "include": ["src/**/*"],
-    "lib": ["es2015"]
-  }
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "module": "commonjs",
+    "target": "es5",
+    "downlevelIteration": true,
+    "lib": ["es6", "dom"],
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin"
+      }
+    ],
+    "sourceMap": true,
+    "allowJs": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "importHelpers": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest",
+    "src/setupTests.ts",
+    "**/*.spec.ts"
+  ],
+  "include": ["src", "__mocks__"]
+}

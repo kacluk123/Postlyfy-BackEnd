@@ -1,5 +1,11 @@
 {
   "defaultSeverity": "error",
+  "extends": [
+    "tslint-react-hooks",
+    "tslint:recommended",
+    "tslint-react",
+    "tslint-config-prettier"
+  ],
   "jsRules": {},
   "rules": {
     "react-hooks-nesting": {
@@ -47,7 +53,7 @@
     "no-string-literal": false,
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
-    "no-trailing-whitespace": true,
+    "no-trailing-whitespace": false,
     "no-unnecessary-initializer": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
@@ -59,7 +65,7 @@
       "check-else",
       "check-whitespace"
     ],
-    "prefer-const": true,
+    "prefer-const": false,
     "quotemark": [false, "single", "jsx-double"],
     "radix": true,
     "semicolon": [true, "always"],
@@ -93,7 +99,7 @@
       }
     ],
     "linebreak-style": [false, "LF"],
-    "typedef": [true, "property-declaration"],
+    "typedef": [true, "parameter", "property-declaration"],
     "no-consecutive-blank-lines": true
   },
   "rulesDirectory": [],
