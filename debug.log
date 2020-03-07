@@ -1,2 +1,0 @@
-[0917/171401.573:ERROR:filesystem_win.cc(148)] DeleteFile C:\Users\sakuy\AppData\Local\Google\Chrome\User Data\Crashpad\reports\fda39b19-74be-4605-90db-c3622d10808e.dmp: Proces nie mo¿e uzyskaæ dostêpu do pliku, poniewa¿ jest on u¿ywany przez inny proces. (0x20)
-[0917/171407.291:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: Potok zosta³ zakoñczony. (0x6D)
