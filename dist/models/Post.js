@@ -23,7 +23,8 @@ class Posts {
             .collection("posts")
             .aggregate([
             ...sorting.allSorting,
-            // { $addFields: { comments: { $reverseArray: "$comments" } }},
+            { $skip: Number(offset) },
+            { $limit: Number(limit) },
             { $addFields: {
                     postsId: { $toObjectId: "$createdBy" },
                     comments: { $slice: ["$comments", 3] },
@@ -50,35 +51,91 @@ class Posts {
                     userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
                 },
             },
-            // { $unwind: "$comments" },
-            // { $addFields: { authorId: { $toObjectId: "$comments.author" } } },
-            // {
-            //   $lookup: {
-            //     from: "Users",
-            //     localField: "authorId",
-            //     foreignField: "$_id",
-            //     as: "commentAuthorDetails"
-            //   }
-            // },
-            // {
-            //   $group: {
-            //     _id: {
-            //       author: "$commentAuthorDetails.name",
-            //       _id: "$comments._id"
-            //     }
-            //   }
-            // },
             {
                 $project: {
                     postsId: 0,
                     userDetails: 0,
                 },
             },
-            { $skip: Number(offset) },
-            { $limit: Number(limit) },
+            {
+                $unwind: {
+                    path: "$comments",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            { $addFields: { authorCommentId: { $toObjectId: "$comments.commentAuthorId" } } },
+            {
+                $lookup: {
+                    from: "Users",
+                    localField: "authorCommentId",
+                    foreignField: "_id",
+                    as: "commentAuthorDetails",
+                },
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    postContent: {
+                        $first: "$postContent"
+                    },
+                    addedAt: {
+                        $first: "$addedAt"
+                    },
+                    createdBy: {
+                        $first: "$createdBy"
+                    },
+                    userPicture: {
+                        $first: "$userPicture"
+                    },
+                    likesCount: {
+                        $first: "$likesCount"
+                    },
+                    likes: {
+                        $first: "$likes"
+                    },
+                    tags: {
+                        $first: "$tags"
+                    },
+                    totalComments: {
+                        $first: "$totalComments"
+                    },
+                    comments: {
+                        $push: {
+                            $cond: {
+                                if: { $ne: ["$commentAuthorDetails", []] },
+                                then: {
+                                    _id: "$comments._id",
+                                    postId: "$_id",
+                                    commentData: {
+                                        content: "$comments.content",
+                                        addedAt: "$comments.addedAt"
+                                    },
+                                    commentAuthor: {
+                                        name: { $arrayElemAt: ["$commentAuthorDetails.name", 0] },
+                                        picture: { $arrayElemAt: ["$commentAuthorDetails.picture", 0] }
+                                    }
+                                },
+                                else: null,
+                            }
+                        }
+                    }
+                }
+            },
         ])
             .toArray();
     }
+    // $push: {
+    // _id: "$comments._id",
+    // postId: "$_id",
+    // commentData: {
+    //   content: "$comments.content",
+    //   addedAt: "$comments.addedAt"
+    // },
+    // commentsAuthor: {
+    //   name: { $arrayElemAt: ["$commentAuthorDetails.name", 0] },
+    //   picture: { $arrayElemAt: ["$commentAuthorDetails.picture", 0] }
+    // }
+    // }
     static togglePostLike(userId, postId) {
         return __awaiter(this, void 0, void 0, function* () {
             const db = database_1.getDb();

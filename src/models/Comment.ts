@@ -5,6 +5,7 @@ interface ICommentConstructorParams {
   userName: string;
   comment: string;
   postId: string;
+  commentAuthorId: string;
 }
 
 export default class Comment {
@@ -27,12 +28,14 @@ export default class Comment {
   private content: string;
   private postId: string;
   private addedAt: Date;
+  private commentAuthorId: string
   private _id: mongodb.ObjectId;
 
-  constructor({ comment, userName, postId }: ICommentConstructorParams) {
+  constructor({ comment, userName, postId, commentAuthorId }: ICommentConstructorParams) {
     this.content = comment;
     this.author = userName;
     this.postId = postId;
+    this.commentAuthorId = commentAuthorId;
     this.addedAt = new Date();
     this._id = new ObjectId();
   }

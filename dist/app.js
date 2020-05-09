@@ -10,6 +10,7 @@ const tags_1 = __importDefault(require("./routes/tags"));
 const user_1 = __importDefault(require("./routes/user"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const database_1 = __importDefault(require("./util/database"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const socket_1 = require("./util/socket");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = express_1.default();
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Origin, X-Requested-With");
     next();
 });
+app.use(express_fileupload_1.default());
 app.use(cookie_parser_1.default());
 app.use(body_parser_1.default.json());
 app.use(auth_1.default);

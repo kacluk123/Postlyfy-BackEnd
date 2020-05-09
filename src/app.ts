@@ -6,6 +6,7 @@ import userRoutes from "./routes/user";
 import bodyPaser from "body-parser";
 import mongoConnect from "./util/database";
 import mongodb from "mongodb";
+import fileUpload from 'express-fileupload';
 import socketIo from "socket.io";
 import { init } from "./util/socket";
 import cookieParser from "cookie-parser";
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
   );
   next();
 });
+app.use(fileUpload());
 app.use(cookieParser());
 app.use(bodyPaser.json());
 app.use(signupRoutes);

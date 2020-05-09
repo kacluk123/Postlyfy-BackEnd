@@ -1,0 +1,1 @@
+{"version":3,"file":"is-image.js","sourceRoot":"","sources":["../../src/middleware/is-image.ts"],"names":[],"mappings":";;AAEA,MAAM,cAAc,GAAG;IACrB,WAAW;IACX,WAAW;IACX,YAAY;CACb,CAAC;AAEF,MAAM,OAAO,GAAmB,CAC9B,GAAY,EACZ,GAAa,EACb,IAAkB,EAClB,EAAE;IAEF,+BAA+B;IAE/B,iDAAiD;IACjD,eAAe;IACf,WAAW;IACX,QAAQ;IACR,mBAAmB;IACnB,0EAA0E;IAC1E,IAAI;AACN,CAAC,CAAC;AAEF,kBAAe,OAAO,CAAC"}

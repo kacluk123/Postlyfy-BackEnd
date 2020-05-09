@@ -105,7 +105,12 @@ export const getPosts: RequestHandler = async (
 
     const response = {
       isError: false,
-      posts: postsList,
+      posts: postsList.map(post => {
+        return {
+          ...post,
+          comments: post.comments.filter(Boolean)
+        };
+      }),
       offset: Number(offset),
       limit: Number(limit),
       total: postsTotalNumber,
@@ -156,6 +161,7 @@ export const addComment: RequestHandler = async (
       ...req.body,
       postId: req.params.postId,
       userName: req.userName,
+      commentAuthorId: req.userId
     };
     const comment: Comment = new Comment(constructorParams);
 
@@ -196,4 +202,11 @@ export const getComments: RequestHandler = async (
   } catch (err) {
     console.log(err);
   }
+};
+
+export const uploadImage: RequestHandler = async (
+  req: Request,
+  res: Response,
+) => {
+  console.log(req.files);
 };

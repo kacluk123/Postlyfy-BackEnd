@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../util/database");
 const mongodb_1 = __importStar(require("mongodb"));
 class Comment {
-    constructor({ comment, userName, postId }) {
+    constructor({ comment, userName, postId, commentAuthorId }) {
         this.addComment = () => __awaiter(this, void 0, void 0, function* () {
             const db = database_1.getDb();
             const convertedToMongoObjectIdPostId = new mongodb_1.default.ObjectId(this.postId);
@@ -42,6 +42,7 @@ class Comment {
         this.content = comment;
         this.author = userName;
         this.postId = postId;
+        this.commentAuthorId = commentAuthorId;
         this.addedAt = new Date();
         this._id = new mongodb_1.ObjectId();
     }

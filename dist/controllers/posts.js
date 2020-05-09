@@ -75,7 +75,9 @@ exports.getPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
         const postsTotalNumber = yield getTotalPostNumber(sorting.match.$match);
         const response = {
             isError: false,
-            posts: postsList,
+            posts: postsList.map(post => {
+                return Object.assign({}, post, { comments: post.comments.filter(Boolean) });
+            }),
             offset: Number(offset),
             limit: Number(limit),
             total: postsTotalNumber,
@@ -103,7 +105,7 @@ exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () 
         res.status(422).json(errors.array());
     }
     else {
-        const constructorParams = Object.assign({}, req.body, { postId: req.params.postId, userName: req.userName });
+        const constructorParams = Object.assign({}, req.body, { postId: req.params.postId, userName: req.userName, commentAuthorId: req.userId });
         const comment = new Comment_1.default(constructorParams);
         try {
             yield comment.addComment();
@@ -128,5 +130,8 @@ exports.getComments = (req, res) => __awaiter(this, void 0, void 0, function* ()
     catch (err) {
         console.log(err);
     }
+});
+exports.uploadImage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    console.log(req.files);
 });
 //# sourceMappingURL=posts.js.map
