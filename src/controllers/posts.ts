@@ -167,8 +167,9 @@ export const addComment: RequestHandler = async (
 
     try {
       await comment.addComment();
-      
-      res.status(200).json({ isError: false, comment: comment.commentInstance });
+      const responseComment = await comment.getResponseComment(req.userId);
+
+      res.status(200).json({ isError: false, comment: responseComment });
     } catch (err) {
       console.log(err);
     }

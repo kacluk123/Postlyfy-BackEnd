@@ -109,7 +109,8 @@ exports.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () 
         const comment = new Comment_1.default(constructorParams);
         try {
             yield comment.addComment();
-            res.status(200).json({ isError: false, comment: comment.commentInstance });
+            const responseComment = yield comment.getResponseComment(req.userId);
+            res.status(200).json({ isError: false, comment: responseComment });
         }
         catch (err) {
             console.log(err);

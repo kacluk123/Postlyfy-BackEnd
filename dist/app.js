@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 });
 app.use(express_fileupload_1.default());
 app.use(cookie_parser_1.default());
-app.use(body_parser_1.default.json());
+app.use(body_parser_1.default.json({ limit: '50mb' }));
 app.use(auth_1.default);
 app.use(posts_1.default);
 app.use(tags_1.default);

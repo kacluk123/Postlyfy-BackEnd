@@ -25,9 +25,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../util/database");
 const mongodb_1 = __importStar(require("mongodb"));
+const User_1 = __importDefault(require("../models/User"));
 class Comment {
     constructor({ comment, userName, postId, commentAuthorId }) {
         this.addComment = () => __awaiter(this, void 0, void 0, function* () {
@@ -49,6 +53,23 @@ class Comment {
     get commentInstance() {
         const _a = this, { addComment } = _a, commentData = __rest(_a, ["addComment"]);
         return commentData;
+    }
+    getResponseComment(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const [commentAuthor] = yield User_1.default.getUserById(userId);
+            return {
+                _id: this._id,
+                postId: this.postId,
+                commentAuthor: {
+                    name: commentAuthor.name,
+                    picture: commentAuthor.userPicture
+                },
+                commentData: {
+                    addedAt: this.addedAt,
+                    content: this.content,
+                }
+            };
+        });
     }
 }
 Comment.getComments = (postId, skip) => {

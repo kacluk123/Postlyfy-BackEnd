@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 });
 app.use(fileUpload());
 app.use(cookieParser());
-app.use(bodyPaser.json());
+app.use(bodyPaser.json({ limit: '50mb'}));
 app.use(signupRoutes);
 app.use(postRoutes);
 app.use(tagsRoutes);

@@ -1,7 +1,8 @@
 import { getDb } from "../util/database";
 import mongodb from "mongodb";
 import { string } from "prop-types";
-import { Sorting, ISort } from '../helpers/createSort' 
+import { Sorting, ISort } from '../helpers/createSort';
+import SaveImage from '../helpers/saveImageToDb';
 
 type postList = Array<{
   _id: string;
@@ -17,6 +18,11 @@ type postList = Array<{
 // postContent: "$postContent",
 // tags: "$tags"
 export default class Posts {
+  private post: string;
+  private userId: string;
+  private tags: string[];
+  private postImage: string | null;
+
   public static getPosts({
     limit,
     offset,
@@ -47,6 +53,14 @@ export default class Posts {
           },
         },
         {
+          $lookup: {
+            from: "Images",
+            localField: "imageId",
+            foreignField: "_id",
+            as: "postImage",
+          },
+        },
+        {
           $addFields: {
             createdBy: {
               $cond: {
@@ -56,6 +70,13 @@ export default class Posts {
               },
             },
             userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
+            imageSrc: {
+              $cond: {
+                if: { $ne: ["$postImage", []] },
+                then: { $arrayElemAt: ["$postImage.src", 0] },
+                else: null,
+              },
+            },
           },
         },
         {
@@ -93,6 +114,9 @@ export default class Posts {
             },
             userPicture: {
               $first: "$userPicture"
+            },
+            imageSrc: {
+              $first: "$imageSrc"
             },
             likesCount: {
               $first: "$likesCount"
@@ -132,19 +156,6 @@ export default class Posts {
       .toArray();
   }
 
-
-  // $push: {
-    // _id: "$comments._id",
-    // postId: "$_id",
-    // commentData: {
-    //   content: "$comments.content",
-    //   addedAt: "$comments.addedAt"
-    // },
-    // commentsAuthor: {
-    //   name: { $arrayElemAt: ["$commentAuthorDetails.name", 0] },
-    //   picture: { $arrayElemAt: ["$commentAuthorDetails.picture", 0] }
-    // }
-  // }
   public static async togglePostLike(userId: string, postId: string) {
     const db = getDb();
     const convertedToMongoObjectIdPostId = new mongodb.ObjectId(postId);
@@ -183,7 +194,7 @@ export default class Posts {
     );
   }
 
-  public static countPosts(match: ISort["match"]): Promise<number> {
+  public static countPosts(match: ISort["match"] | null): Promise<number> {
     const db = getDb();
     
     return db
@@ -192,20 +203,16 @@ export default class Posts {
       .count();
   }
 
-  protected post: string;
-  protected userId: string;
-  protected tags: string[];
-
-  constructor({ post, userId, tags }) {
+  constructor({ post, userId, tags, postImage}) {
     this.post = post;
     this.userId = userId;
     this.tags = tags;
+    this.postImage = postImage;
   }
 
-  public savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
+  public async savePostToDb(): Promise<mongodb.InsertOneWriteOpResult> {
     const db = getDb();
-
-    return db.collection("posts").insertOne({
+    const postData = {
       createdBy: this.userId,
       postContent: this.post,
       tags: this.removeHashTags(this.tags),
@@ -213,7 +220,17 @@ export default class Posts {
       likes: [],
       likesCount: 0,
       comments: [],
-    });
+    };
+
+    if (this.postImage) {
+      const image = await SaveImage.saveImageToDb(this.postImage);
+      const imageId = image.ops[0]._id;
+      return db.collection("posts").insertOne({
+        ...postData,
+        imageId,
+      });
+    }
+    return db.collection("posts").insertOne(postData);
   }
 
   private removeHashTags(arratToRemoveFirstLetter: string[]): string[] {

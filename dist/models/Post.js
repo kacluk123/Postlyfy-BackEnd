@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../util/database");
 const mongodb_1 = __importDefault(require("mongodb"));
+const saveImageToDb_1 = __importDefault(require("../helpers/saveImageToDb"));
 // addedAt: "$addedAt",
 // postContent: "$postContent",
 // tags: "$tags"
@@ -40,6 +41,14 @@ class Posts {
                 },
             },
             {
+                $lookup: {
+                    from: "Images",
+                    localField: "imageId",
+                    foreignField: "_id",
+                    as: "postImage",
+                },
+            },
+            {
                 $addFields: {
                     createdBy: {
                         $cond: {
@@ -49,6 +58,13 @@ class Posts {
                         },
                     },
                     userPicture: { $arrayElemAt: ["$userDetails.userPicture", 0] },
+                    imageSrc: {
+                        $cond: {
+                            if: { $ne: ["$postImage", []] },
+                            then: { $arrayElemAt: ["$postImage.src", 0] },
+                            else: null,
+                        },
+                    },
                 },
             },
             {
@@ -87,6 +103,9 @@ class Posts {
                     userPicture: {
                         $first: "$userPicture"
                     },
+                    imageSrc: {
+                        $first: "$imageSrc"
+                    },
                     likesCount: {
                         $first: "$likesCount"
                     },
@@ -124,18 +143,6 @@ class Posts {
         ])
             .toArray();
     }
-    // $push: {
-    // _id: "$comments._id",
-    // postId: "$_id",
-    // commentData: {
-    //   content: "$comments.content",
-    //   addedAt: "$comments.addedAt"
-    // },
-    // commentsAuthor: {
-    //   name: { $arrayElemAt: ["$commentAuthorDetails.name", 0] },
-    //   picture: { $arrayElemAt: ["$commentAuthorDetails.picture", 0] }
-    // }
-    // }
     static togglePostLike(userId, postId) {
         return __awaiter(this, void 0, void 0, function* () {
             const db = database_1.getDb();
@@ -171,21 +178,30 @@ class Posts {
             .find(match)
             .count();
     }
-    constructor({ post, userId, tags }) {
+    constructor({ post, userId, tags, postImage }) {
         this.post = post;
         this.userId = userId;
         this.tags = tags;
+        this.postImage = postImage;
     }
     savePostToDb() {
-        const db = database_1.getDb();
-        return db.collection("posts").insertOne({
-            createdBy: this.userId,
-            postContent: this.post,
-            tags: this.removeHashTags(this.tags),
-            addedAt: new Date(),
-            likes: [],
-            likesCount: 0,
-            comments: [],
+        return __awaiter(this, void 0, void 0, function* () {
+            const db = database_1.getDb();
+            const postData = {
+                createdBy: this.userId,
+                postContent: this.post,
+                tags: this.removeHashTags(this.tags),
+                addedAt: new Date(),
+                likes: [],
+                likesCount: 0,
+                comments: [],
+            };
+            if (this.postImage) {
+                const image = yield saveImageToDb_1.default.saveImageToDb(this.postImage);
+                const imageId = image.ops[0]._id;
+                return db.collection("posts").insertOne(Object.assign({}, postData, { imageId }));
+            }
+            return db.collection("posts").insertOne(postData);
         });
     }
     removeHashTags(arratToRemoveFirstLetter) {

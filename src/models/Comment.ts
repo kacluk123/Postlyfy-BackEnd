@@ -1,5 +1,6 @@
 import { getDb } from "../util/database";
 import mongodb, { ObjectId } from "mongodb";
+import User from '../models/User';
 
 interface ICommentConstructorParams {
   userName: string;
@@ -44,6 +45,23 @@ export default class Comment {
     const { addComment, ...commentData } = this;
 
     return commentData;
+  }
+
+  public async getResponseComment(userId: string) {
+    const [commentAuthor] = await User.getUserById(userId);
+    
+    return {
+      _id: this._id,
+      postId: this.postId,
+      commentAuthor: {
+        name: commentAuthor.name,
+        picture: commentAuthor.userPicture
+      },
+      commentData: {
+        addedAt: this.addedAt,
+        content: this.content,
+      }
+    };
   }
 
   public addComment = async () => {
